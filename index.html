@@ -5,28 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CloseOut Nica - Directorio de Sucursales</title>
   
+  <!-- Google Fonts: Outfit (Display) y Plus Jakarta Sans (Cuerpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Configuración de Colores de Marca y Modo Oscuro -->
+  <!-- Configuración de Colores y Tipografía -->
   <script>
     tailwind.config = {
-      darkMode: 'class', // Habilita el modo oscuro manual por clases
+      darkMode: 'class', 
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          },
           colors: {
             brand: {
-              blue: '#002D72', /* Azul Corporativo Close Out */
-              red: '#E30613',  /* Rojo Corporativo Close Out */
-              green: '#00A650' /* Verde para Niños / Éxito */
+              blue: '#002D72', 
+              red: '#E30613',  
+              green: '#00A650' 
             }
+          },
+          boxShadow: {
+            'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+            'glow-blue': '0 0 20px rgba(0, 45, 114, 0.4)',
+            'glow-red': '0 0 20px rgba(227, 6, 19, 0.4)',
           }
         }
       }
     }
   </script>
 
-  <!-- Script para prevenir el parpadeo blanco al cargar en modo oscuro -->
+  <!-- Script para Modo Oscuro (Previene Parpadeo) -->
   <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
@@ -35,47 +49,93 @@
     }
   </script>
   
-  <!-- FontAwesome para Íconos -->
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    @keyframes fadeInUp { 
-      from { opacity: 0; transform: translateY(10px); } 
-      to { opacity: 1; transform: translateY(0); } 
-    }
-    .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+    /* Efectos personalizados modernos */
+    body { scroll-behavior: smooth; }
     
-    /* Ocultar elementos */
+    .font-display { font-family: 'Outfit', sans-serif; }
+    
+    @keyframes fadeInUp { 
+      from { opacity: 0; transform: translateY(20px) scale(0.98); } 
+      to { opacity: 1; transform: translateY(0) scale(1); } 
+    }
+    .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+
+    /* Patrón de fondo (Grid) */
+    .bg-grid-pattern {
+      background-image: radial-gradient(rgba(0, 45, 114, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .dark .bg-grid-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+
+    /* Glassmorphism */
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .dark .glass {
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     .hidden-view { display: none !important; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-100 min-h-screen overflow-x-hidden transition-colors duration-300">
+<body class="bg-[#F8FAFC] dark:bg-[#0B1121] font-sans text-gray-800 dark:text-gray-200 min-h-screen overflow-x-hidden transition-colors duration-500 relative">
+
+  <!-- Elementos decorativos de fondo (Blobs) -->
+  <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-grid-pattern">
+    <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 blur-[100px] animate-float"></div>
+    <div class="absolute top-[20%] right-[-5%] w-[30vw] h-[30vw] rounded-full bg-brand-red/5 dark:bg-brand-red/10 blur-[80px] animate-float" style="animation-delay: -2s;"></div>
+  </div>
 
   <!-- Toast Notification Container -->
-  <div id="toast-container" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toast-container" class="fixed bottom-6 left-4 right-4 md:left-auto md:right-6 z-[60] flex flex-col gap-3 pointer-events-none"></div>
 
   <!-- HEADER -->
-  <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-30 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300">
+  <header class="glass shadow-sm sticky top-0 z-40 transition-colors duration-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
-      <div class="flex items-center space-x-2 md:space-x-3 cursor-pointer" onclick="toggleAdminView(false)">
-        <div id="logo-bg" class="p-1.5 md:p-2 rounded-lg bg-brand-red shadow-md">
+      <div class="flex items-center space-x-3 cursor-pointer group" onclick="toggleAdminView(false)">
+        <div id="logo-bg" class="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-brand-red to-[#b3000b] shadow-lg shadow-brand-red/30 group-hover:scale-105 transition-transform duration-300">
           <i class="fas fa-shopping-bag text-white text-lg md:text-xl"></i>
         </div>
-        <h1 class="text-xl md:text-2xl font-black tracking-tight">
-          <span class="text-brand-blue dark:text-blue-400">Close</span><span class="text-brand-red">Out</span><span id="logo-text" class="text-gray-500 dark:text-gray-400 text-sm ml-1 md:ml-1.5 font-bold">Nica</span>
+        <h1 class="text-2xl md:text-3xl font-display font-black tracking-tight leading-none">
+          <span class="text-brand-blue dark:text-blue-400">Close</span><span class="text-brand-red">Out</span>
+          <span id="logo-text" class="block md:inline text-xs md:text-sm text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-0.5 md:mt-0 md:ml-2">Nica</span>
         </h1>
       </div>
       
-      <div class="flex items-center space-x-2">
-        <!-- Botón Tema Claro/Oscuro -->
-        <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-          <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm md:text-base"></i>
-          <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm md:text-base"></i>
+      <div class="flex items-center space-x-3">
+        <!-- Botón Tema -->
+        <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:scale-110 transition-all duration-300">
+          <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm"></i>
+          <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm"></i>
         </button>
 
-        <!-- Botón Modo Admin -->
-        <button id="btn-admin-toggle" class="flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-brand-blue dark:hover:text-blue-400">
-          <i class="fas fa-cog"></i> <span class="hidden sm:inline" id="btn-admin-text">Modo Admin</span><span class="sm:hidden" id="btn-admin-text-mobile">Admin</span>
+        <!-- Botón Admin -->
+        <button id="btn-admin-toggle" class="flex items-center space-x-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-full transition-all duration-300 bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:shadow-md">
+          <i class="fas fa-sliders-h"></i> <span class="hidden sm:inline" id="btn-admin-text">Panel Admin</span>
         </button>
       </div>
     </div>
@@ -84,78 +144,104 @@
   <!-- =========================================
        VISTA CLIENTE (PÚBLICA)
        ========================================= -->
-  <main id="client-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 animate-fade-in-up">
+  <main id="client-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 animate-fade-in-up">
     
     <!-- Categorías Rápidas -->
-    <div class="mb-6 md:mb-8">
-      <h3 class="text-base md:text-lg font-bold text-brand-blue dark:text-blue-400 mb-3 md:mb-4 border-l-4 border-brand-red pl-3">Filtrar por Categoría</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" id="category-buttons">
+    <div class="mb-8 md:mb-12">
+      <div class="flex items-center mb-5">
+        <div class="w-2 h-6 bg-brand-red rounded-full mr-3"></div>
+        <h3 class="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight">Filtrar Colección</h3>
+      </div>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" id="category-buttons">
         <!-- Renderizado por JS -->
       </div>
     </div>
 
-    <!-- Geolocalización -->
-    <div class="bg-gradient-to-r from-brand-blue to-[#00173D] dark:from-[#00173D] dark:to-gray-900 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white mb-6 md:mb-8 shadow-xl flex flex-col md:flex-row items-center justify-between border border-[#002D72] dark:border-gray-700">
-      <div class="mb-4 md:mb-0 md:mr-8 text-center md:text-left w-full">
-        <h2 class="text-xl md:text-2xl font-extrabold mb-1 md:mb-2 text-white">¿No sabes a dónde ir?</h2>
-        <p class="text-blue-100 dark:text-gray-300 text-xs md:text-base max-w-md mx-auto md:mx-0 opacity-90">Encontramos la sucursal más cercana a tu ubicación actual con un solo clic.</p>
-        <p id="location-error" class="mt-2 flex items-center justify-center md:justify-start text-red-300 text-xs font-bold hidden-view">
-          <i class="fas fa-exclamation-circle mr-1"></i> <span id="location-error-text"></span>
+    <!-- Geolocalización Banner Premium -->
+    <div class="relative overflow-hidden rounded-[2rem] p-6 md:p-10 text-white mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between border border-white/10 group">
+      <!-- Background Abstracto -->
+      <div class="absolute inset-0 bg-gradient-to-br from-brand-blue via-[#001f52] to-[#00102e] dark:from-[#051126] dark:via-[#020814] dark:to-black -z-10"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 bg-brand-red/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+      
+      <div class="relative z-10 mb-6 md:mb-0 md:mr-8 text-center md:text-left w-full">
+        <span class="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold tracking-widest uppercase mb-3 text-blue-200">Ubicación Inteligente</span>
+        <h2 class="text-3xl md:text-4xl font-display font-black mb-2 text-white">¿No sabes a dónde ir?</h2>
+        <p class="text-blue-100/80 dark:text-gray-400 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal más cercana a ti con un solo toque y ahorra tiempo.</p>
+        <p id="location-error" class="mt-3 flex items-center justify-center md:justify-start text-brand-red font-bold text-sm bg-red-500/10 py-2 px-4 rounded-lg backdrop-blur-sm hidden-view w-fit mx-auto md:mx-0">
+          <i class="fas fa-exclamation-triangle mr-2"></i> <span id="location-error-text"></span>
         </p>
       </div>
-      <button id="btn-locate" class="w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-2 bg-white text-brand-blue px-5 md:px-6 py-3 rounded-full font-extrabold shadow-lg hover:bg-gray-50 hover:scale-105 transform transition-all duration-200 text-sm md:text-base">
-        <i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">La más cercana</span>
+      <button id="btn-locate" class="relative z-10 w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-3 bg-white text-brand-blue px-8 py-4 rounded-full font-extrabold shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_40px_rgba(255,255,255,0.5)] hover:scale-105 transform transition-all duration-300 text-base md:text-lg">
+        <i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>
       </button>
     </div>
 
     <!-- Nearest Store Result -->
-    <div id="nearest-store-container" class="mb-6 md:mb-8 animate-fade-in-up hidden-view">
-      <div class="bg-brand-green/10 dark:bg-brand-green/20 border-2 border-brand-green rounded-xl md:rounded-2xl p-4 md:p-6 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between transition-colors">
-        <div class="w-full">
-          <h3 class="text-xs md:text-sm font-bold text-brand-green dark:text-green-400 mb-1 flex items-center uppercase tracking-wide">
-            <i class="fas fa-map-marker-alt mr-1.5"></i> Tu tienda más cercana
-          </h3>
-          <div class="flex items-center space-x-2 mb-1"><h4 id="nearest-name" class="text-lg md:text-xl font-black text-gray-900 dark:text-white leading-tight"></h4></div>
-          <p id="nearest-address" class="text-gray-700 dark:text-gray-300 text-xs md:text-sm font-medium leading-snug"></p>
+    <div id="nearest-store-container" class="mb-10 animate-fade-in-up hidden-view">
+      <div class="glass relative overflow-hidden rounded-3xl p-6 md:p-8 shadow-soft border-2 border-brand-green/50 dark:border-brand-green/30 flex flex-col md:flex-row items-center justify-between">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-brand-green/10 rounded-full blur-[40px]"></div>
+        
+        <div class="w-full relative z-10 text-center md:text-left mb-6 md:mb-0">
+          <div class="inline-flex items-center px-3 py-1 rounded-full bg-brand-green/10 text-brand-green text-xs font-black uppercase tracking-widest mb-3">
+            <i class="fas fa-street-view mr-2"></i> Tu Mejor Opción
+          </div>
+          <h4 id="nearest-name" class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white leading-tight mb-2"></h4>
+          <p id="nearest-address" class="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium flex items-center justify-center md:justify-start">
+            <i class="fas fa-map-marker-alt text-brand-green mr-2"></i> <span id="nearest-address-text"></span>
+          </p>
         </div>
-        <div class="mt-3 md:mt-0 w-full md:w-auto text-center bg-white dark:bg-gray-800 px-4 py-2 md:px-5 md:py-3 rounded-lg md:rounded-xl border border-brand-green/30 dark:border-brand-green/50 shadow-sm flex flex-row md:flex-col justify-between md:justify-center items-center transition-colors">
-          <p class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 uppercase font-extrabold tracking-wider md:mb-1">Distancia</p>
-          <p class="text-xl md:text-2xl font-black text-brand-green dark:text-green-400"><span id="nearest-distance"></span> <span class="text-sm md:text-base">km</span></p>
+
+        <div class="w-full md:w-auto relative z-10 text-center bg-white dark:bg-gray-800 px-8 py-5 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col items-center min-w-[160px]">
+          <p class="text-xs text-gray-400 dark:text-gray-500 uppercase font-black tracking-widest mb-1">A tan solo</p>
+          <p class="text-4xl font-display font-black text-brand-green tracking-tighter">
+            <span id="nearest-distance"></span><span class="text-xl text-gray-400 ml-1">km</span>
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- DISEÑO DE MAPA GRANDE Y SUCURSALES ABAJO -->
-    <div class="flex flex-col gap-8 md:gap-12">
-      <!-- Mapa Cliente (Ancho Completo) -->
+    <!-- DISEÑO DE MAPA Y SUCURSALES -->
+    <div class="flex flex-col gap-10 md:gap-14">
+      
+      <!-- Mapa Cliente Premium -->
       <div class="w-full">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 md:p-6 lg:p-8 transition-colors duration-300">
-          <div class="flex flex-col space-y-3 md:space-y-4 mb-3 md:mb-5">
-            <div class="flex items-center justify-between">
-              <h3 class="font-bold text-brand-blue dark:text-blue-400 flex items-center text-base md:text-xl"><i class="fas fa-map-marked-alt text-brand-red mr-2 md:mr-3"></i> Mapa de Sucursales</h3>
-              <button id="btn-ver-todo" class="text-xs md:text-sm bg-gray-100 dark:bg-gray-700 hover:bg-brand-blue dark:hover:bg-blue-600 hover:text-white text-gray-600 dark:text-gray-200 px-4 py-1.5 rounded-full font-bold transition-colors hidden-view">Ver Todo</button>
+        <div class="glass rounded-[2rem] shadow-soft border border-gray-200/50 dark:border-gray-700/50 p-4 md:p-6 lg:p-8">
+          <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center">
+              <div class="w-10 h-10 rounded-xl bg-brand-blue/10 flex items-center justify-center mr-4">
+                <i class="fas fa-map-marked-alt text-brand-blue text-xl"></i>
+              </div>
+              <h3 class="font-display font-bold text-gray-900 dark:text-white text-xl md:text-2xl">Explorar Mapa</h3>
             </div>
-            <div class="flex flex-wrap gap-1.5 md:gap-2 pb-3 md:pb-4 border-b border-gray-100 dark:border-gray-700 transition-colors duration-300" id="depto-buttons">
-              <!-- Renderizado por JS -->
+            
+            <div class="w-full md:w-auto flex items-center bg-gray-100 dark:bg-gray-800 p-1.5 rounded-xl overflow-x-auto custom-scrollbar">
+              <div class="flex space-x-1" id="depto-buttons">
+                <!-- Renderizado por JS -->
+              </div>
             </div>
           </div>
-          <!-- Altura adaptativa: perfecta para celular y más amplia en PC -->
-          <div class="relative w-full h-[350px] md:h-[450px] lg:h-[550px] bg-gray-100 dark:bg-gray-900 rounded-xl md:rounded-2xl border border-gray-200 dark:border-gray-600 overflow-hidden shadow-inner transition-colors duration-300">
+          
+          <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-gray-200 dark:bg-gray-800 rounded-2xl md:rounded-[1.5rem] overflow-hidden shadow-inner ring-1 ring-gray-900/5 dark:ring-white/5">
             <div id="client-map" class="absolute inset-0 w-full h-full"></div>
+            <!-- Overlay decorativo interior -->
+            <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_40px_rgba(0,0,0,0.5)]"></div>
           </div>
         </div>
       </div>
 
-      <!-- Grilla Tiendas Cliente (Debajo del Mapa) -->
+      <!-- Grilla Tiendas Cliente -->
       <div class="w-full">
-        <div class="flex items-center justify-between mb-5 border-b-2 border-gray-100 dark:border-gray-700 pb-3 transition-colors duration-300">
-          <h2 id="grid-title" class="text-xl md:text-2xl font-bold text-brand-blue dark:text-blue-400">Todas las Sucursales</h2>
-          <span id="grid-count" class="bg-gray-100 dark:bg-gray-800 text-brand-blue dark:text-blue-400 text-xs md:text-sm font-bold px-3 py-1 rounded-full border border-gray-200 dark:border-gray-700 transition-colors">0 resultados</span>
+        <div class="flex items-end justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-800">
+          <div>
+            <h2 id="grid-title" class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white">Sucursales Disponibles</h2>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1 font-medium">Descubre nuestras tiendas y horarios</p>
+          </div>
+          <span id="grid-count" class="bg-brand-blue/10 dark:bg-brand-blue/20 text-brand-blue dark:text-blue-400 text-sm font-bold px-4 py-1.5 rounded-full border border-brand-blue/20">0</span>
         </div>
-        <!-- Grid expandido: 1 col móvil, 2 tablet, 3-4 computadora -->
-        <div id="stores-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        
+        <div id="stores-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <!-- Renderizado por JS -->
-          <div class="col-span-full flex justify-center py-10"><i class="fas fa-circle-notch fa-spin text-3xl text-brand-red"></i></div>
+          <div class="col-span-full flex justify-center py-10"><i class="fas fa-circle-notch fa-spin text-4xl text-brand-blue"></i></div>
         </div>
       </div>
     </div>
@@ -164,35 +250,42 @@
   <!-- =========================================
        VISTA ADMINISTRADOR
        ========================================= -->
-  <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 animate-fade-in-up hidden-view">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-gray-200 dark:border-gray-700 pb-4 transition-colors duration-300">
-      <div>
-        <h2 class="text-xl md:text-2xl font-bold text-brand-blue dark:text-blue-400">Panel de Control</h2>
-        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium">Administra ubicaciones en tiempo real.</p>
-      </div>
-      <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
-        <button onclick="restoreBaseStores()" class="w-full sm:w-auto justify-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2.5 rounded-lg font-bold flex items-center hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm transition-colors text-xs md:text-sm">
-          Cargar Tiendas Base
-        </button>
-        <button onclick="openAddModal()" class="w-full sm:w-auto justify-center bg-brand-red text-white px-5 py-2.5 rounded-lg font-bold flex items-center hover:bg-[#c1040f] shadow-md transition-colors text-sm">
-          <i class="fas fa-plus mr-2"></i> Agregar Sucursal
-        </button>
+  <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up hidden-view">
+    <div class="glass rounded-3xl p-6 md:p-8 shadow-soft border border-gray-200/50 dark:border-gray-700/50 mb-8">
+      <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div class="flex items-center">
+          <div class="w-14 h-14 rounded-2xl bg-gray-900 dark:bg-white flex items-center justify-center mr-5 shadow-lg">
+            <i class="fas fa-user-shield text-white dark:text-gray-900 text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white">Panel de Control</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Gestión avanzada de base de datos de sucursales.</p>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3 w-full lg:w-auto">
+          <button onclick="restoreBaseStores()" class="flex-1 lg:flex-none justify-center bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-5 py-3 rounded-xl font-bold flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm border border-gray-200 dark:border-gray-700 transition-all text-sm">
+            <i class="fas fa-history mr-2 opacity-50"></i> Restaurar Base
+          </button>
+          <button onclick="openAddModal()" class="flex-1 lg:flex-none justify-center bg-brand-blue text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-[#001f52] shadow-lg shadow-brand-blue/30 transition-all text-sm transform hover:-translate-y-0.5">
+            <i class="fas fa-plus mr-2"></i> Nueva Sucursal
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Tabla de Sucursales -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden transition-colors duration-300">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700 overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
-          <thead class="bg-gray-50 dark:bg-gray-700 transition-colors">
+        <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
+          <thead class="bg-gray-50/50 dark:bg-gray-800/50">
             <tr>
-              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Sucursal</th>
-              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Categoría / Depto</th>
-              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">Dirección</th>
-              <th class="px-4 md:px-6 py-3 text-right text-[10px] md:text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Acciones</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Información de Sucursal</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Detalles</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest hidden sm:table-cell">Ubicación</th>
+              <th class="px-6 py-4 text-right text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Acción</th>
             </tr>
           </thead>
-          <tbody id="admin-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors">
+          <tbody id="admin-table-body" class="divide-y divide-gray-100 dark:divide-gray-700">
             <!-- Renderizado por JS -->
           </tbody>
         </table>
@@ -201,101 +294,116 @@
   </main>
 
   <!-- MODAL DE CONTRASEÑA -->
-  <div id="password-modal" class="fixed inset-0 bg-brand-blue/80 dark:bg-gray-900/90 backdrop-blur-sm items-center justify-center p-4 z-50 hidden-view flex">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6 relative animate-fade-in-up border-t-4 border-brand-red transition-colors duration-300">
-      <button onclick="closePasswordModal()" class="absolute top-4 right-4 text-gray-400 dark:text-gray-500 hover:text-brand-red dark:hover:text-brand-red p-1 transition-colors">
-        <i class="fas fa-times text-xl"></i>
+  <div id="password-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 relative animate-fade-in-up border border-gray-100 dark:border-gray-700">
+      <button onclick="closePasswordModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors bg-gray-100 dark:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center">
+        <i class="fas fa-times text-sm"></i>
       </button>
-      <div class="text-center mb-6">
-        <div class="bg-brand-blue/10 dark:bg-gray-700 p-4 rounded-full inline-block mb-3">
-          <i class="fas fa-lock text-brand-blue dark:text-blue-400 text-2xl"></i>
+      
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 mx-auto bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-700 dark:to-gray-800 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+          <i class="fas fa-lock text-white text-2xl"></i>
         </div>
-        <h3 class="text-lg md:text-xl font-bold text-brand-blue dark:text-white">Acceso Administrativo</h3>
-        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 mt-1">Ingresa la contraseña para continuar</p>
+        <h3 class="text-2xl font-display font-black text-gray-900 dark:text-white">Acceso Restringido</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Área exclusiva para administradores.</p>
       </div>
+      
       <form id="password-form">
-        <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-xl outline-none focus:border-brand-blue dark:focus:border-blue-400 focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-blue-400/20 transition-colors text-center text-lg font-bold tracking-widest text-brand-blue dark:text-white" />
-        <p id="password-error" class="text-brand-red text-xs mt-2 font-bold text-center hidden-view">Contraseña incorrecta. Intenta de nuevo.</p>
-        <button type="submit" class="w-full mt-4 bg-brand-blue hover:bg-[#00173D] text-white font-bold py-3 rounded-xl transition-colors shadow-md uppercase tracking-wide text-sm">
-          Ingresar al Panel
+        <div class="relative">
+          <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+          <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none focus:border-gray-800 dark:focus:border-gray-400 transition-colors text-lg font-bold tracking-widest text-gray-900 dark:text-white" />
+        </div>
+        <p id="password-error" class="text-brand-red text-xs mt-3 font-bold text-center hidden-view bg-red-50 dark:bg-red-900/20 py-2 rounded-lg">
+          <i class="fas fa-exclamation-circle mr-1"></i> Contraseña incorrecta.
+        </p>
+        <button type="submit" class="w-full mt-6 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-black dark:hover:bg-gray-200 font-black py-4 rounded-xl transition-colors shadow-lg shadow-gray-900/20 dark:shadow-white/10 uppercase tracking-widest text-sm">
+          Desbloquear Panel
         </button>
       </form>
     </div>
   </div>
 
   <!-- MODAL AGREGAR SUCURSAL -->
-  <div id="add-modal" class="fixed inset-0 bg-brand-blue/80 dark:bg-gray-900/90 backdrop-blur-sm items-center justify-center p-4 z-50 hidden-view flex">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up transition-colors duration-300">
-      <div class="w-full md:w-1/2 p-5 md:p-6 overflow-y-auto flex-shrink-0">
-        <div class="flex justify-between items-center mb-5 border-b border-gray-100 dark:border-gray-700 pb-3 transition-colors">
-          <h3 class="text-lg md:text-xl font-bold text-brand-blue dark:text-white flex items-center">
-             <i class="fas fa-store mr-2 text-brand-red"></i> Nueva Sucursal
-          </h3>
-          <button onclick="closeAddModal()" class="text-gray-400 dark:text-gray-500 hover:text-brand-red dark:hover:text-brand-red p-1 transition-colors">
-            <i class="fas fa-times text-xl"></i>
+  <div id="add-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up border border-gray-100 dark:border-gray-700">
+      
+      <div class="w-full md:w-1/2 p-6 md:p-8 overflow-y-auto flex-shrink-0 custom-scrollbar">
+        <div class="flex justify-between items-center mb-8">
+          <div>
+            <h3 class="text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
+               Nueva Sucursal
+            </h3>
+            <p class="text-sm text-gray-500 font-medium mt-1">Completa los datos y marca en el mapa.</p>
+          </div>
+          <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-800 dark:hover:text-white transition-colors bg-gray-100 dark:bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+            <i class="fas fa-times"></i>
           </button>
         </div>
-        <form id="add-store-form" class="space-y-3 md:space-y-4">
+
+        <form id="add-store-form" class="space-y-5">
           <div>
-            <label class="block text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Nombre de Tienda</label>
-            <input type="text" id="f-name" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-brand-blue outline-none text-sm font-medium transition-colors" placeholder="Ej: Close Out Linda Vista" />
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Nombre de Tienda</label>
+            <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl focus:border-brand-blue outline-none text-sm font-bold transition-colors" placeholder="Ej: Close Out Linda Vista" />
           </div>
-          <div class="grid grid-cols-2 gap-3 md:gap-4">
+          <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Categoría</label>
-              <select id="f-type" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white rounded-lg outline-none text-sm font-medium focus:ring-2 focus:ring-brand-blue transition-colors">
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Categoría</label>
+              <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none">
                 <option value="normal">Full Price</option>
                 <option value="liquidacion">Liquidación</option>
                 <option value="ninos">Niños</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Departamento</label>
-              <select id="f-depto" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white rounded-lg outline-none text-sm font-medium focus:ring-2 focus:ring-brand-blue transition-colors">
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Departamento</label>
+              <select id="f-depto" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none">
                 <!-- Se llena por JS -->
               </select>
             </div>
           </div>
           <div>
-            <label class="block text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Dirección Exacta</label>
-            <textarea id="f-address" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white rounded-lg outline-none text-sm font-medium focus:ring-2 focus:ring-brand-blue transition-colors" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Dirección Exacta</label>
+            <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-medium focus:border-brand-blue transition-colors resize-none" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
           </div>
           <div>
-            <label class="block text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Horario</label>
-            <input type="text" id="f-schedule" required value="Lunes a Sábado: 9:00-6:00" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-white rounded-lg outline-none text-sm font-medium focus:ring-2 focus:ring-brand-blue transition-colors" />
-          </div>
-          <div class="pt-3 md:pt-4 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 dark:border-gray-700 gap-3 transition-colors">
-            <div id="modal-map-status" class="text-xs md:text-sm font-bold text-brand-red flex items-center">
-              <i class="fas fa-exclamation-circle mr-1"></i> Marca en el mapa 👉
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Horario</label>
+            <div class="relative">
+              <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              <input type="text" id="f-schedule" required value="Lunes a Sábado: 9:00-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
             </div>
-            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-6 py-2.5 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-md hover:bg-[#00173D] transition-colors">
-              Guardar Sucursal
+          </div>
+          <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 dark:border-gray-700 gap-4">
+            <div id="modal-map-status" class="text-sm font-bold text-gray-400 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg">
+              <i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉
+            </div>
+            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-8 py-3.5 rounded-xl font-black disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-lg shadow-brand-blue/30 hover:bg-[#001f52] transition-all transform hover:-translate-y-0.5">
+              Guardar
             </button>
           </div>
         </form>
       </div>
-      <!-- Mapa en el modal adaptado para móvil -->
-      <div class="w-full md:w-1/2 bg-gray-100 dark:bg-gray-900 h-[250px] md:h-auto relative border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 ring-0 md:ring-4 md:ring-brand-blue/30 flex-grow transition-colors duration-300">
-        <div class="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 bg-brand-red text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-md flex items-center whitespace-nowrap pointer-events-none">
-          <i class="fas fa-map-marker-alt mr-1.5 md:mr-2"></i> Toca para ubicar
+
+      <!-- Mapa Modal -->
+      <div class="w-full md:w-1/2 bg-gray-200 dark:bg-gray-900 h-[300px] md:h-auto relative border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700">
+        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 glass text-gray-900 dark:text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center pointer-events-none">
+          <i class="fas fa-crosshairs mr-2 text-brand-red"></i> Ubicar
         </div>
         <div id="admin-map" class="absolute inset-0 w-full h-full"></div>
       </div>
     </div>
   </div>
 
-  <!-- FIREBASE & LOGIC SCRIPT (Módulo) -->
+  <!-- FIREBASE & LOGIC SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- LÓGICA DEL DARK MODE TEMA ---
+    // --- MODO OSCURO LÓGICA ---
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
     const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
     const themeToggleBtn = document.getElementById('theme-toggle');
 
-    // Muestra el ícono correcto al cargar
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         themeToggleLightIcon.classList.remove('hidden');
     } else {
@@ -325,11 +433,10 @@
         }
     });
 
-    // --- CONFIGURACIONES GLOBALES ---
+    // --- CONFIGURACIONES ---
     const GOOGLE_MAPS_API_KEY = 'AIzaSyBf6lATeECejIkEBntQyu2-jmYAy-xXggQ';
     const ADMIN_PASSWORD = 'admin';
 
-    // Tu configuración real de Firebase
     const userFirebaseConfig = {
       apiKey: "AIzaSyCm_fYhRxmyQvVfWyNCCs1cPTcLZujhy6E",
       authDomain: "closeout-56aef.firebaseapp.com",
@@ -343,12 +450,10 @@
     const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : userFirebaseConfig;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'close-out-app';
 
-    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Datos Iniciales
     const initialStoresData = [
       { name: "Close Out Las Americas", type: "liquidacion", depto: "Managua", address: "Costado noroeste del semáforo Villa Progreso", schedule: "Lunes a Sábado: 9:30-6:00", lat: 12.146, lon: -86.22 },
       { name: "Close Out K8", type: "normal", depto: "Managua", address: "UNIPLAZA K8 Carr. Sur", schedule: "Lunes a Sábado: 10:00-6:30", lat: 12.11, lon: -86.29 },
@@ -367,36 +472,28 @@
 
     const departmentsList = ["Todos", "Managua", "León", "Chinandega", "Masaya", "Carazo", "Estelí"];
     
-    // Configuración de categorías adaptada a los colores corporativos y modo oscuro
+    // Categorías con estilos premium
     const categories = [
-      { id: 'all', name: 'Todas', icon: 'fa-shopping-bag', iconColor: 'text-gray-500 dark:text-gray-400', bgColor: 'bg-gray-100 dark:bg-gray-700', activeRing: 'ring-gray-400' },
-      { id: 'normal', name: 'Full Price', icon: 'fa-store', iconColor: 'text-brand-blue dark:text-blue-400', bgColor: 'bg-brand-blue/10 dark:bg-brand-blue/20', activeRing: 'ring-brand-blue dark:ring-blue-400' },
-      { id: 'liquidacion', name: 'Liquidación', icon: 'fa-tags', iconColor: 'text-brand-red', bgColor: 'bg-brand-red/10 dark:bg-brand-red/20', activeRing: 'ring-brand-red' },
-      { id: 'ninos', name: 'Niños', icon: 'fa-baby', iconColor: 'text-brand-green', bgColor: 'bg-brand-green/10 dark:bg-brand-green/20', activeRing: 'ring-brand-green' },
+      { id: 'all', name: 'Todas', icon: 'fa-layer-group', iconColor: 'text-gray-600 dark:text-gray-300', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
+      { id: 'normal', name: 'Full Price', icon: 'fa-gem', iconColor: 'text-brand-blue dark:text-blue-400', bgColor: 'bg-brand-blue/5 dark:bg-brand-blue/10', hoverBg: 'hover:bg-brand-blue/10 dark:hover:bg-brand-blue/20', activeRing: 'ring-brand-blue/50 dark:ring-blue-400/50' },
+      { id: 'liquidacion', name: 'Liquidación', icon: 'fa-tags', iconColor: 'text-brand-red', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-brand-red/10 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50' },
+      { id: 'ninos', name: 'Niños', icon: 'fa-child', iconColor: 'text-brand-green', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-brand-green/10 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
     ];
 
-    // Variables de Estado
     let stores = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
     let activeCategory = 'all';
     let activeDepto = 'Todos';
     let nearestStore = null;
     let isAdminView = false;
-    
-    // Mapas
-    let clientMap = null;
-    let adminMap = null;
-    let clientMarkers = [];
-    let adminClickMarker = null;
-    let adminSelectedLocation = null;
+    let clientMap = null, adminMap = null, clientMarkers = [], adminClickMarker = null, adminSelectedLocation = null;
 
-    // Utilidades
     window.showToast = function(msg, isError = false) {
       const container = document.getElementById('toast-container');
       const t = document.createElement('div');
-      t.className = `px-5 py-3 rounded-xl shadow-lg text-white font-bold animate-fade-in-up text-sm md:text-base pointer-events-auto border-l-4 ${isError ? 'bg-gray-900 border-brand-red' : 'bg-gray-900 border-brand-green'}`;
-      t.innerHTML = isError ? `<i class="fas fa-exclamation-triangle mr-2 text-brand-red"></i>${msg}` : `<i class="fas fa-check-circle mr-2 text-brand-green"></i>${msg}`;
+      t.className = `glass px-5 py-4 rounded-2xl shadow-xl text-gray-900 dark:text-white font-bold animate-fade-in-up text-sm flex items-center border-l-4 ${isError ? 'border-brand-red' : 'border-brand-green'}`;
+      t.innerHTML = isError ? `<div class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center mr-3"><i class="fas fa-exclamation text-brand-red"></i></div>${msg}` : `<div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center mr-3"><i class="fas fa-check text-brand-green"></i></div>${msg}`;
       container.appendChild(t);
-      setTimeout(() => t.remove(), 3500);
+      setTimeout(() => t.remove(), 4000);
     };
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -407,30 +504,21 @@
       return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
     }
 
-    // ==========================================
-    // RENDERIZADO DE UI CON COLORES DE MARCA
-    // ==========================================
     function renderFilters() {
-      // Categorías
+      // Categorías - Estilo tarjeta moderna flotante
       const catContainer = document.getElementById('category-buttons');
       catContainer.innerHTML = categories.map(cat => `
-        <button onclick="setCategory('${cat.id}')" class="flex flex-col items-center justify-center p-3 md:p-5 rounded-xl md:rounded-2xl transition-all duration-200 border-2 ${activeCategory === cat.id ? `ring-2 ring-offset-2 dark:ring-offset-gray-900 ${cat.activeRing} border-transparent shadow-md ${cat.bgColor}` : `border-transparent opacity-80 hover:opacity-100 bg-white dark:bg-gray-800 shadow-sm hover:${cat.bgColor}`}">
-          <div class="mb-1.5 md:mb-2 bg-white dark:bg-gray-800 p-2 md:p-3 rounded-full shadow-sm ${cat.iconColor} border border-gray-100 dark:border-gray-700 transition-colors"><i class="fas ${cat.icon} text-lg md:text-xl"></i></div>
-          <span class="font-extrabold text-[11px] md:text-sm text-center text-gray-800 dark:text-gray-200 tracking-tight transition-colors">${cat.name}</span>
+        <button onclick="setCategory('${cat.id}')" class="group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor}` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}">
+          <div class="mb-3 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-soft ${cat.iconColor} group-hover:scale-110 transition-transform duration-300"><i class="fas ${cat.icon} text-xl"></i></div>
+          <span class="font-display font-bold text-xs md:text-sm text-center text-gray-800 dark:text-gray-200 tracking-wide">${cat.name}</span>
         </button>
       `).join('');
 
-      // Departamentos
+      // Departamentos - Estilo Pill minimalista
       const deptContainer = document.getElementById('depto-buttons');
       deptContainer.innerHTML = departmentsList.map(dep => `
-        <button onclick="setDepto('${dep}')" class="px-3 py-1.5 md:px-4 md:py-1.5 rounded-full text-[11px] md:text-xs font-bold transition-all duration-200 ${activeDepto === dep ? 'bg-brand-blue text-white shadow-md transform scale-105' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-brand-blue dark:hover:text-blue-400'}">${dep}</button>
+        <button onclick="setDepto('${dep}')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeDepto === dep ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md transform scale-105' : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'}">${dep}</button>
       `).join('');
-
-      const btnVerTodo = document.getElementById('btn-ver-todo');
-      if (activeDepto !== 'Todos') btnVerTodo.classList.remove('hidden-view');
-      else btnVerTodo.classList.add('hidden-view');
-
-      document.getElementById('grid-title').innerText = activeDepto === 'Todos' ? 'Todas las Sucursales' : `Sucursales en ${activeDepto}`;
     }
 
     function renderStoresList() {
@@ -439,48 +527,56 @@
         (activeDepto === 'Todos' || store.depto === activeDepto)
       );
 
-      document.getElementById('grid-count').innerText = `${filtered.length} ${filtered.length === 1 ? 'resultado' : 'resultados'}`;
+      // Animación al actualizar número
+      const gridCount = document.getElementById('grid-count');
+      gridCount.innerText = `${filtered.length}`;
+      gridCount.classList.remove('animate-pulse');
+      void gridCount.offsetWidth;
+      gridCount.classList.add('animate-pulse');
+
       const grid = document.getElementById('stores-grid');
 
       if (filtered.length === 0) {
         grid.innerHTML = `
-          <div class="col-span-full bg-white dark:bg-gray-800 p-8 md:p-10 rounded-2xl text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors">
-            <i class="fas fa-store-slash text-gray-300 dark:text-gray-600 text-4xl md:text-5xl mb-2 md:mb-3"></i>
-            <h3 class="text-base md:text-lg font-bold text-brand-blue dark:text-blue-400 mb-1">No encontramos sucursales</h3>
-            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium">Intenta seleccionar otro departamento o limpiar los filtros.</p>
+          <div class="col-span-full bg-white dark:bg-gray-800 p-12 rounded-[2rem] text-center border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
+            <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-store-slash text-gray-300 dark:text-gray-600 text-3xl"></i></div>
+            <h3 class="text-xl font-display font-black text-gray-900 dark:text-white mb-2">Sin resultados</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-xs">Intenta cambiar de departamento o borrar los filtros actuales.</p>
           </div>`;
       } else {
-        grid.innerHTML = filtered.map(store => {
+        grid.innerHTML = filtered.map((store, index) => {
           const isNearest = nearestStore && nearestStore.id === store.id;
           const colorPrefix = store.type === 'normal' ? 'brand-blue' : store.type === 'liquidacion' ? 'brand-red' : 'brand-green';
-          const icon = store.type === 'normal' ? 'fa-store' : store.type === 'liquidacion' ? 'fa-tags' : 'fa-baby';
+          const bgHover = store.type === 'normal' ? 'hover:bg-blue-50/50 dark:hover:bg-brand-blue/10' : store.type === 'liquidacion' ? 'hover:bg-red-50/50 dark:hover:bg-brand-red/10' : 'hover:bg-green-50/50 dark:hover:bg-brand-green/10';
+          const icon = store.type === 'normal' ? 'fa-gem' : store.type === 'liquidacion' ? 'fa-tags' : 'fa-child';
           const label = store.type === 'normal' ? 'Full Price' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
-          // Para el hover text en modo oscuro del normal:
-          const hoverText = store.type === 'normal' ? 'group-hover:text-brand-blue dark:group-hover:text-blue-400' : `group-hover:text-${colorPrefix}`;
 
           return `
-          <div class="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-sm border transition-all duration-300 overflow-hidden group flex flex-col ${isNearest ? 'border-brand-green ring-2 ring-brand-green/20' : 'border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-500'}">
-            <div class="h-1 md:h-1.5 w-full bg-${colorPrefix}"></div>
-            <div class="p-4 md:p-5 flex flex-col flex-grow">
-              <div class="flex justify-between items-start mb-2 md:mb-3">
-                <h4 class="text-base md:text-lg font-extrabold text-gray-900 dark:text-white ${hoverText} transition-colors leading-tight pr-2 tracking-tight">${store.name}</h4>
-                <span class="p-1.5 md:p-2 rounded-full flex-shrink-0 bg-${colorPrefix}/10 text-${colorPrefix}">
-                  <i class="fas ${icon} text-xs md:text-sm"></i>
-                </span>
-              </div>
-              <div class="space-y-2 md:space-y-2.5 flex-grow">
-                <div class="flex items-start text-xs md:text-sm text-gray-600 dark:text-gray-300 font-medium">
-                  <i class="fas fa-map-marker-alt mr-1.5 mt-0.5 shrink-0 ${isNearest ? 'text-brand-green' : 'text-gray-400 dark:text-gray-500'}"></i>
-                  <span class="line-clamp-2 leading-snug">${store.address}</span>
+          <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up ${bgHover} hover:shadow-xl hover:-translate-y-1" style="animation-delay: ${index * 0.05}s">
+            ${isNearest ? `<div class="absolute inset-0 border-2 border-brand-green rounded-[1.5rem] pointer-events-none z-10"></div><div class="absolute top-0 right-0 bg-brand-green text-white text-[10px] font-black px-3 py-1 rounded-bl-xl z-20">¡MÁS CERCANA!</div>` : ''}
+            
+            <div class="p-6 md:p-7 flex flex-col flex-grow relative z-0">
+              <div class="flex justify-between items-start mb-4">
+                <div class="pr-3">
+                  <span class="inline-block px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest text-${colorPrefix} bg-${colorPrefix}/10 mb-2">${label}</span>
+                  <h4 class="text-lg md:text-xl font-display font-black text-gray-900 dark:text-white leading-tight tracking-tight">${store.name}</h4>
                 </div>
-                <div class="flex items-center flex-wrap gap-1.5 pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <span class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-0.5 rounded text-[10px] md:text-xs font-bold transition-colors">${store.depto}</span>
-                  <span class="px-2 py-0.5 rounded text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest text-${colorPrefix} bg-${colorPrefix}/10">
-                    ${label}
-                  </span>
+                <div class="w-10 h-10 rounded-xl flex-shrink-0 bg-${colorPrefix}/5 flex items-center justify-center text-${colorPrefix} group-hover:scale-110 transition-transform shadow-inner border border-${colorPrefix}/10">
+                  <i class="fas ${icon}"></i>
                 </div>
               </div>
-              <div class="pt-2 md:pt-3 mt-2 md:mt-3 border-t border-gray-100 dark:border-gray-700 text-[11px] md:text-xs text-gray-500 dark:text-gray-400 font-bold transition-colors"><i class="far fa-clock mr-1 text-gray-400 dark:text-gray-500"></i> ${store.schedule}</div>
+              
+              <div class="space-y-3 flex-grow mt-2">
+                <div class="flex items-start text-sm text-gray-500 dark:text-gray-400 font-medium">
+                  <i class="fas fa-map-pin mr-2 mt-1 text-gray-300 dark:text-gray-600 group-hover:text-${colorPrefix} transition-colors"></i>
+                  <span class="line-clamp-2 leading-relaxed">${store.address}</span>
+                </div>
+              </div>
+              
+              <div class="pt-4 mt-5 border-t border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-400 dark:text-gray-500"><i class="far fa-clock mr-1.5"></i>${store.schedule.split(':')[0]}</span>
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold">${store.depto}</span>
+              </div>
             </div>
           </div>`;
         }).join('');
@@ -494,39 +590,57 @@
       tbody.innerHTML = stores.map(store => {
         const colorPrefix = store.type === 'normal' ? 'brand-blue' : store.type === 'liquidacion' ? 'brand-red' : 'brand-green';
         return `
-          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-100 dark:border-gray-700 last:border-0 transition-colors">
-            <td class="px-4 md:px-6 py-3 md:py-4">
-              <div class="font-bold text-gray-900 dark:text-white text-xs md:text-sm">${store.name}</div>
-              <div class="text-[10px] md:text-xs text-gray-400 dark:text-gray-500 mt-0.5 font-mono">Lat: ${store.lat.toFixed(4)}, Lon: ${store.lon.toFixed(4)}</div>
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors">
+            <td class="px-6 py-4">
+              <div class="font-display font-bold text-gray-900 dark:text-white">${store.name}</div>
+              <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
             </td>
-            <td class="px-4 md:px-6 py-3 md:py-4">
-              <span class="px-2 py-0.5 inline-flex text-[9px] md:text-xs font-extrabold rounded-full uppercase tracking-wider bg-${colorPrefix}/10 text-${colorPrefix}">${store.type}</span>
-              <div class="text-[10px] md:text-sm text-gray-500 dark:text-gray-400 mt-1 font-bold">${store.depto}</div>
+            <td class="px-6 py-4">
+              <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest bg-${colorPrefix}/10 text-${colorPrefix}">${store.type}</span>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mt-2 font-bold"><i class="fas fa-map-marker-alt mr-1 text-gray-300"></i>${store.depto}</div>
             </td>
-            <td class="px-4 md:px-6 py-3 md:py-4 hidden sm:table-cell">
-              <div class="text-xs md:text-sm text-gray-900 dark:text-gray-200 line-clamp-2 font-medium">${store.address}</div>
-              <div class="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-bold">${store.schedule}</div>
+            <td class="px-6 py-4 hidden sm:table-cell">
+              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium">${store.address}</div>
+              <div class="text-[10px] text-gray-400 mt-1 font-bold"><i class="far fa-clock mr-1"></i>${store.schedule}</div>
             </td>
-            <td class="px-4 md:px-6 py-3 md:py-4 text-right">
-              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-brand-red/10 hover:bg-brand-red p-1.5 md:p-2 rounded-md transition-colors"><i class="fas fa-trash text-xs md:text-base"></i></button>
+            <td class="px-6 py-4 text-right">
+              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 dark:bg-red-900/10 hover:bg-brand-red p-2.5 rounded-xl transition-colors shadow-sm"><i class="fas fa-trash-alt"></i></button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // LLAMADA INMEDIATA
+    // ==========================================
+    // LLAMADA INMEDIATA: Evita que la página se quede en blanco
+    // ==========================================
     renderFilters();
     renderStoresList();
 
-    // ==========================================
-    // MAPAS DE GOOGLE
-    // ==========================================
     window.initMaps = function() {
-      // Estilo oscuro opcional para el mapa cuando está el modo dark activo
       const mapOptions = {
         center: { lat: 12.136, lng: -86.251 },
-        zoom: 12, mapTypeControl: false, streetViewControl: false, gestureHandling: 'greedy' // greedy ayuda en móviles
+        zoom: 12, mapTypeControl: false, streetViewControl: false, gestureHandling: 'greedy',
+        styles: [
+          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+          { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+          { featureType: "administrative.land_parcel", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
+          { featureType: "poi", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+          { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
+          { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+          { featureType: "transit.line", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+          { featureType: "transit.station", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
+          { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
+        ]
       };
 
       clientMap = new google.maps.Map(document.getElementById('client-map'), mapOptions);
@@ -542,8 +656,9 @@
           position: { lat, lng: lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
         });
         
-        document.getElementById('modal-map-status').className = 'text-xs md:text-sm font-bold text-brand-green flex items-center';
-        document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-map-marker-alt mr-1"></i> Ubicación lista';
+        const statusEl = document.getElementById('modal-map-status');
+        statusEl.className = 'text-sm font-bold text-brand-green flex items-center bg-green-50 dark:bg-green-900/20 py-2 px-4 rounded-lg';
+        statusEl.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Coordenadas capturadas';
         document.getElementById('btn-save-store').disabled = false;
       });
 
@@ -570,13 +685,14 @@
           position: { lat: store.lat, lng: store.lon },
           map: clientMap,
           title: store.name,
-          icon: isNearest ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+          icon: isNearest ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          animation: isNearest ? google.maps.Animation.BOUNCE : null
         });
 
         const infoWindow = new google.maps.InfoWindow({
-          content: `<div style="color: #1f2937; padding: 4px; font-family: sans-serif; max-width: 220px;">
-                      <h3 style="font-weight: 800; font-size: 14px; margin-bottom: 2px; color: #002D72;">${store.name}</h3>
-                      <p style="font-size: 12px; margin: 0; line-height: 1.3; font-weight: 500;">${store.address}</p>
+          content: `<div style="padding: 5px; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 240px;">
+                      <h3 style="font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #002D72; font-family: 'Outfit', sans-serif;">${store.name}</h3>
+                      <p style="font-size: 13px; margin: 0; line-height: 1.4; color: #4b5563;">${store.address}</p>
                     </div>`
         });
         marker.addListener('click', () => infoWindow.open(clientMap, marker));
@@ -587,7 +703,8 @@
 
       if (nearestStore) {
         clientMap.setCenter({ lat: nearestStore.lat, lng: nearestStore.lon });
-        clientMap.setZoom(15);
+        clientMap.setZoom(16);
+        setTimeout(() => clientMarkers.find(m => m.title === nearestStore.name)?.setAnimation(null), 3000); // Para el rebote
       } else if (filtered.length === 1) {
         clientMap.setCenter({ lat: filtered[0].lat, lng: filtered[0].lon });
         clientMap.setZoom(15);
@@ -600,23 +717,17 @@
       }
     }
 
-    // Cargar Script de Google Maps
     const mapScript = document.createElement('script');
     mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMaps`;
     mapScript.async = true;
     document.head.appendChild(mapScript);
 
-    // ==========================================
-    // LÓGICA DE INTERACCIÓN GLOBAL
-    // ==========================================
     window.setCategory = function(catId) {
       activeCategory = catId;
       nearestStore = null;
       document.getElementById('nearest-store-container').classList.add('hidden-view');
       renderFilters();
       renderStoresList();
-      
-      // Auto-scroll al mapa o a la grid
       document.getElementById('client-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
@@ -628,20 +739,18 @@
       renderStoresList();
     };
 
-    document.getElementById('btn-ver-todo').onclick = () => setDepto('Todos');
-
     document.getElementById('btn-locate').onclick = () => {
       const btnText = document.getElementById('btn-locate-text');
       const errCont = document.getElementById('location-error');
       
-      btnText.innerText = "Buscando...";
+      btnText.innerText = "Calculando...";
       errCont.classList.add('hidden-view');
       nearestStore = null;
 
       if (!navigator.geolocation) {
-        document.getElementById('location-error-text').innerText = 'Tu navegador no soporta geolocalización.';
+        document.getElementById('location-error-text').innerText = 'Geolocalización no soportada.';
         errCont.classList.remove('hidden-view');
-        btnText.innerText = "La más cercana";
+        btnText.innerText = "Encuéntrame";
         return;
       }
 
@@ -665,38 +774,30 @@
             activeDepto = closest.depto;
             
             document.getElementById('nearest-name').innerText = closest.name;
-            document.getElementById('nearest-address').innerText = closest.address;
+            document.getElementById('nearest-address-text').innerText = closest.address;
             document.getElementById('nearest-distance').innerText = closest.distance;
             document.getElementById('nearest-store-container').classList.remove('hidden-view');
             
             renderFilters();
             renderStoresList();
-            
-            // Hacer scroll suave hacia la tarjeta del resultado en móviles
             document.getElementById('nearest-store-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-          btnText.innerText = "La más cercana";
+          btnText.innerText = "Encuéntrame";
         },
         () => {
-          document.getElementById('location-error-text').innerText = 'Revisa permisos de ubicación en tu navegador.';
+          document.getElementById('location-error-text').innerText = 'Revisa permisos de ubicación.';
           errCont.classList.remove('hidden-view');
-          btnText.innerText = "La más cercana";
+          btnText.innerText = "Encuéntrame";
         }
       );
     };
 
-    // ==========================================
-    // LÓGICA DE ADMINISTRADOR Y MODALES
-    // ==========================================
     window.toggleAdminView = function(forceClient = false) {
       if (forceClient || isAdminView) {
         isAdminView = false;
         document.getElementById('client-view').classList.remove('hidden-view');
         document.getElementById('admin-view').classList.add('hidden-view');
-        document.getElementById('logo-text').classList.replace('text-gray-400', 'text-gray-500'); // Regresa texto a normal
-        document.getElementById('btn-admin-text').innerText = 'Modo Admin';
-        document.getElementById('btn-admin-text-mobile').innerText = 'Admin';
-        document.getElementById('btn-admin-toggle').className = "flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 hover:text-brand-blue dark:hover:text-blue-400";
+        document.getElementById('btn-admin-text').innerText = 'Panel Admin';
         if(clientMap) google.maps.event.trigger(clientMap, "resize");
       } else {
         document.getElementById('password-modal').classList.remove('hidden-view');
@@ -720,10 +821,7 @@
         isAdminView = true;
         document.getElementById('client-view').classList.add('hidden-view');
         document.getElementById('admin-view').classList.remove('hidden-view');
-        document.getElementById('logo-text').classList.replace('text-gray-500', 'text-gray-400');
-        document.getElementById('btn-admin-text').innerText = 'Salir Admin';
-        document.getElementById('btn-admin-text-mobile').innerText = 'Salir';
-        document.getElementById('btn-admin-toggle').className = "flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-brand-red/10 dark:bg-brand-red/20 text-brand-red hover:bg-brand-red hover:text-white";
+        document.getElementById('btn-admin-text').innerText = 'Salir de Admin';
         renderAdminTable();
       } else {
         document.getElementById('password-error').classList.remove('hidden-view');
@@ -733,7 +831,6 @@
     window.openAddModal = function() {
       const select = document.getElementById('f-depto');
       select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
-      
       document.getElementById('add-modal').classList.remove('hidden-view');
       if(adminMap) {
         google.maps.event.trigger(adminMap, "resize");
@@ -746,14 +843,13 @@
       document.getElementById('add-store-form').reset();
       adminSelectedLocation = null;
       if (adminClickMarker) adminClickMarker.setMap(null);
-      document.getElementById('modal-map-status').className = 'text-xs md:text-sm font-bold text-brand-red flex items-center';
-      document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i> Marca en el mapa 👉';
+      
+      const statusEl = document.getElementById('modal-map-status');
+      statusEl.className = 'text-sm font-bold text-gray-400 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg';
+      statusEl.innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
       document.getElementById('btn-save-store').disabled = true;
     };
 
-    // ==========================================
-    // CONEXIÓN A FIREBASE (Se ejecuta en segundo plano)
-    // ==========================================
     const initFirebaseData = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -767,22 +863,18 @@
         onSnapshot(storesRef, (snapshot) => {
           if (!snapshot.empty) {
             stores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Obligamos a que se dibuje de nuevo por si se actualizaron datos en vivo
             renderFilters();
             renderStoresList();
             if (isAdminView) renderAdminTable();
           }
-        }, (err) => {
-          console.error("Firebase no está configurado o bloqueado. Usando modo local puro.");
-        });
-
-      } catch (error) {
-        console.error("Auth error:", error);
-      }
+        }, (err) => console.error("Usando modo local puro."));
+      } catch (error) { console.error("Auth error:", error); }
     };
-
+    
+    // Iniciar conexión con Firebase en segundo plano
     initFirebaseData();
 
-    // Guardar Tienda
     document.getElementById('add-store-form').onsubmit = async (e) => {
       e.preventDefault();
       if (!adminSelectedLocation) return;
@@ -801,40 +893,30 @@
         const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
         await addDoc(storesRef, newStore);
         closeAddModal();
-        showToast("Sucursal guardada correctamente");
+        showToast("Sucursal guardada exitosamente");
       } catch (error) {
-        console.error(error);
-        showToast("Error al guardar en Firebase. Verifique permisos.", true);
+        showToast("Error al guardar en Firebase", true);
       }
     };
 
-    // Eliminar
     window.deleteStore = async (id) => {
-      if(confirm("¿Estás seguro de eliminar esta sucursal permanentemente?")) {
+      if(confirm("¿Eliminar esta sucursal permanentemente?")) {
         try {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id));
           showToast("Sucursal eliminada");
-        } catch (error) {
-          showToast("Error al eliminar", true);
-        }
+        } catch (error) { showToast("Error al eliminar", true); }
       }
     };
 
-    // Restaurar Base
     window.restoreBaseStores = async () => {
-      if(confirm("¿Quieres agregar automáticamente todas las ubicaciones base de Close Out a la base de datos?")) {
+      if(confirm("¿Agregar tiendas base por defecto?")) {
         try {
           const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
-          for (const store of initialStoresData) {
-            await addDoc(storesRef, store);
-          }
-          showToast("¡Tiendas base agregadas exitosamente!");
-        } catch (error) {
-          showToast("Hubo un error al agregar las tiendas", true);
-        }
+          for (const store of initialStoresData) await addDoc(storesRef, store);
+          showToast("¡Tiendas base restauradas!");
+        } catch (error) { showToast("Error al restaurar", true); }
       }
     };
-
   </script>
 </body>
 </html>
