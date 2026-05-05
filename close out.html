@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CloseOut Nica - Directorio de Sucursales</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome para Íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @keyframes fadeInUp { 
+      from { opacity: 0; transform: translateY(10px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    .animate-fade-in-up { animation: fadeInUp 0.4s ease-out forwards; }
+    
+    /* Ocultar elementos */
+    .hidden-view { display: none !important; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen overflow-x-hidden">
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 z-[60] flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- HEADER -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-2 cursor-pointer" onclick="toggleAdminView(false)">
+        <div id="logo-bg" class="p-1.5 md:p-2 rounded-lg bg-blue-600 shadow-sm">
+          <i class="fas fa-shopping-bag text-white text-lg md:text-xl"></i>
+        </div>
+        <h1 class="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">
+          CloseOut<span id="logo-text" class="text-blue-600">Nica</span>
+        </h1>
+      </div>
+      
+      <button id="btn-admin-toggle" class="flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200">
+        <i class="fas fa-cog"></i> <span class="hidden sm:inline" id="btn-admin-text">Modo Admin</span><span class="sm:hidden" id="btn-admin-text-mobile">Admin</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- =========================================
+       VISTA CLIENTE (PÚBLICA)
+       ========================================= -->
+  <main id="client-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 animate-fade-in-up">
+    
+    <!-- Categorías Rápidas -->
+    <div class="mb-6 md:mb-8">
+      <h3 class="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Filtrar por Categoría</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4" id="category-buttons">
+        <!-- Renderizado por JS -->
+      </div>
+    </div>
+
+    <!-- Geolocalización -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl md:rounded-3xl p-5 md:p-8 text-white mb-6 md:mb-8 shadow-lg flex flex-col md:flex-row items-center justify-between">
+      <div class="mb-4 md:mb-0 md:mr-8 text-center md:text-left w-full">
+        <h2 class="text-xl md:text-2xl font-extrabold mb-1 md:mb-2">¿No sabes a dónde ir?</h2>
+        <p class="text-blue-100 text-xs md:text-base max-w-md mx-auto md:mx-0">Encontramos la sucursal más cercana a tu ubicación actual con un solo clic.</p>
+        <p id="location-error" class="mt-2 flex items-center justify-center md:justify-start text-red-200 text-xs hidden-view">
+          <i class="fas fa-exclamation-circle mr-1"></i> <span id="location-error-text"></span>
+        </p>
+      </div>
+      <button id="btn-locate" class="w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-2 bg-white text-blue-600 px-5 md:px-6 py-3 rounded-full font-bold shadow-lg hover:bg-blue-50 transition-colors disabled:opacity-75 text-sm md:text-base">
+        <i class="fas fa-location-arrow"></i> <span id="btn-locate-text">La más cercana</span>
+      </button>
+    </div>
+
+    <!-- Nearest Store Result -->
+    <div id="nearest-store-container" class="mb-6 md:mb-8 animate-fade-in-up hidden-view">
+      <div class="bg-emerald-50 border-2 border-emerald-400 rounded-xl md:rounded-2xl p-4 md:p-6 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between">
+        <div class="w-full">
+          <h3 class="text-xs md:text-sm font-bold text-emerald-700 mb-1 flex items-center uppercase tracking-wide">
+            <i class="fas fa-map-marker-alt mr-1.5"></i> Tu tienda más cercana
+          </h3>
+          <div class="flex items-center space-x-2 mb-1"><h4 id="nearest-name" class="text-lg md:text-xl font-black text-gray-900 leading-tight"></h4></div>
+          <p id="nearest-address" class="text-gray-600 text-xs md:text-sm leading-snug"></p>
+        </div>
+        <div class="mt-3 md:mt-0 w-full md:w-auto text-center bg-white px-4 py-2 md:px-5 md:py-3 rounded-lg md:rounded-xl border border-emerald-200 shadow-sm flex flex-row md:flex-col justify-between md:justify-center items-center">
+          <p class="text-xs text-gray-500 uppercase font-bold md:mb-1">Distancia</p>
+          <p class="text-xl md:text-2xl font-black text-emerald-600"><span id="nearest-distance"></span> <span class="text-sm md:text-base">km</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-6 md:gap-8">
+      <!-- Mapa Cliente -->
+      <div class="w-full lg:w-1/3">
+        <!-- lg:sticky lg:top-24 evita que el mapa sea pegajoso en celulares, mejorando el scroll -->
+        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-gray-100 p-4 md:p-6 lg:sticky lg:top-24">
+          <div class="flex flex-col space-y-3 md:space-y-4 mb-3 md:mb-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-gray-900 flex items-center text-sm md:text-base"><i class="fas fa-globe-americas text-blue-500 mr-1.5 md:mr-2"></i> Mapa</h3>
+              <button id="btn-ver-todo" class="text-[10px] md:text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-3 py-1 rounded-full font-bold hidden-view">Ver Todo</button>
+            </div>
+            <div class="flex flex-wrap gap-1.5 md:gap-2 pb-2 border-b border-gray-100" id="depto-buttons">
+              <!-- Renderizado por JS -->
+            </div>
+          </div>
+          <!-- Altura fija en celulares (h-[300px]) para que no consuma toda la pantalla -->
+          <div class="relative w-full h-[300px] md:h-[400px] lg:h-auto lg:aspect-[4/5] bg-gray-100 rounded-xl md:rounded-2xl border border-gray-200 overflow-hidden shadow-inner">
+            <div id="client-map" class="absolute inset-0 w-full h-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grilla Tiendas Cliente -->
+      <div class="w-full lg:w-2/3">
+        <div class="flex items-center justify-between mb-4">
+          <h2 id="grid-title" class="text-lg md:text-xl font-bold text-gray-900">Todas las Sucursales</h2>
+          <span id="grid-count" class="bg-blue-100 text-blue-800 text-[10px] md:text-xs font-bold px-2 py-1 md:px-3 md:py-1 rounded-full">0 resultados</span>
+        </div>
+        <div id="stores-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+          <!-- Renderizado por JS -->
+          <div class="col-span-full flex justify-center py-10"><i class="fas fa-spinner fa-spin text-3xl text-blue-500"></i></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================
+       VISTA ADMINISTRADOR
+       ========================================= -->
+  <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 animate-fade-in-up hidden-view">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <div>
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900">Panel de Control</h2>
+        <p class="text-xs md:text-sm text-gray-500">Administra ubicaciones en tiempo real.</p>
+      </div>
+      <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full md:w-auto">
+        <button onclick="restoreBaseStores()" class="w-full sm:w-auto justify-center bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-bold flex items-center hover:bg-gray-300 shadow-sm transition-colors text-xs md:text-sm">
+          Cargar Tiendas Base
+        </button>
+        <button onclick="openAddModal()" class="w-full sm:w-auto justify-center bg-blue-600 text-white px-5 py-2.5 rounded-lg font-bold flex items-center hover:bg-blue-700 shadow-sm transition-colors text-sm">
+          <i class="fas fa-plus mr-2"></i> Agregar Sucursal
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla de Sucursales -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider">Sucursal</th>
+              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider">Categoría / Depto</th>
+              <th class="px-4 md:px-6 py-3 text-left text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider hidden sm:table-cell">Dirección</th>
+              <th class="px-4 md:px-6 py-3 text-right text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body" class="bg-white divide-y divide-gray-200">
+            <!-- Renderizado por JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL DE CONTRASEÑA -->
+  <div id="password-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 relative animate-fade-in-up">
+      <button onclick="closePasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+      <div class="text-center mb-6">
+        <div class="bg-blue-100 p-3 rounded-full inline-block mb-3">
+          <i class="fas fa-lock text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="text-lg md:text-xl font-bold text-gray-900">Acceso Administrativo</h3>
+        <p class="text-xs md:text-sm text-gray-500 mt-1">Ingresa la contraseña para continuar</p>
+      </div>
+      <form id="password-form">
+        <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-colors text-center text-lg" />
+        <p id="password-error" class="text-red-500 text-xs mt-2 font-semibold text-center hidden-view">Contraseña incorrecta. Intenta de nuevo.</p>
+        <button type="submit" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors shadow-md">
+          Ingresar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL AGREGAR SUCURSAL -->
+  <div id="add-modal" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm items-center justify-center p-4 z-50 hidden-view flex">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up">
+      <div class="w-full md:w-1/2 p-5 md:p-6 overflow-y-auto flex-shrink-0">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-lg md:text-xl font-bold text-gray-900">Nueva Sucursal</h3>
+          <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600 p-1">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <form id="add-store-form" class="space-y-3 md:space-y-4">
+          <div>
+            <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1">Nombre de Tienda</label>
+            <input type="text" id="f-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="Ej: Close Out Linda Vista" />
+          </div>
+          <div class="grid grid-cols-2 gap-3 md:gap-4">
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1">Categoría</label>
+              <select id="f-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm">
+                <option value="normal">Full Price</option>
+                <option value="liquidacion">Liquidación</option>
+                <option value="ninos">Niños</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1">Departamento</label>
+              <select id="f-depto" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm">
+                <!-- Se llena por JS -->
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1">Dirección Exacta</label>
+            <textarea id="f-address" required class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
+          </div>
+          <div>
+            <label class="block text-xs md:text-sm font-bold text-gray-700 mb-1">Horario</label>
+            <input type="text" id="f-schedule" required value="Lunes a Sábado: 9:00-6:00" class="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none text-sm" />
+          </div>
+          <div class="pt-3 md:pt-4 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 gap-3">
+            <div id="modal-map-status" class="text-xs md:text-sm font-bold text-red-500 flex items-center">
+              <i class="fas fa-exclamation-circle mr-1"></i> Marca en el mapa 👉
+            </div>
+            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-md">
+              Guardar Sucursal
+            </button>
+          </div>
+        </form>
+      </div>
+      <!-- Mapa en el modal adaptado para móvil -->
+      <div class="w-full md:w-1/2 bg-gray-100 h-[250px] md:h-auto relative border-t md:border-t-0 md:border-l border-gray-200 ring-0 md:ring-4 md:ring-blue-400 md:ring-opacity-50 flex-grow">
+        <div class="absolute top-2 left-1/2 transform -translate-x-1/2 z-10 bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-xs md:text-sm font-bold shadow-md flex items-center whitespace-nowrap pointer-events-none">
+          <i class="fas fa-map-marker-alt mr-1.5 md:mr-2"></i> Toca para ubicar
+        </div>
+        <div id="admin-map" class="absolute inset-0 w-full h-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE & LOGIC SCRIPT (Módulo) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- CONFIGURACIONES GLOBALES ---
+    const GOOGLE_MAPS_API_KEY = 'AIzaSyBf6lATeECejIkEBntQyu2-jmYAy-xXggQ';
+    const ADMIN_PASSWORD = 'admin';
+
+    // Tu configuración real de Firebase
+    const userFirebaseConfig = {
+      apiKey: "AIzaSyCm_fYhRxmyQvVfWyNCCs1cPTcLZujhy6E",
+      authDomain: "closeout-56aef.firebaseapp.com",
+      projectId: "closeout-56aef",
+      storageBucket: "closeout-56aef.firebasestorage.app",
+      messagingSenderId: "267289908386",
+      appId: "1:267289908386:web:c46f30e3231f0cec01f3fb",
+      measurementId: "G-G89517RSC9"
+    };
+
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : userFirebaseConfig;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'close-out-app';
+
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Datos Iniciales
+    const initialStoresData = [
+      { name: "Close Out Las Americas", type: "liquidacion", depto: "Managua", address: "Costado noroeste del semáforo Villa Progreso", schedule: "Lunes a Sábado: 9:30-6:00", lat: 12.146, lon: -86.22 },
+      { name: "Close Out K8", type: "normal", depto: "Managua", address: "UNIPLAZA K8 Carr. Sur", schedule: "Lunes a Sábado: 10:00-6:30", lat: 12.11, lon: -86.29 },
+      { name: "Close Out Metrocentro", type: "normal", depto: "Managua", address: "Centro Comercial Metro Centro, Modulo PB-1", schedule: "Lun-Sab: 9:30-6:30, Dom: 9:30-3:30", lat: 12.126, lon: -86.262 },
+      { name: "Close Out Rubenia", type: "liquidacion", depto: "Managua", address: "Plaza Sabana, Contiguo a supermercado La Colonia", schedule: "Lunes a Sábado: 9:30-6:00", lat: 12.125, lon: -86.223 },
+      { name: "Close Out Masaya", type: "normal", depto: "Masaya", address: "Centro Comercial UNIPLAZA, Modulos 10 y 11", schedule: "Lun-Sab: 9:30-6:00, Dom: 9:30-4:00", lat: 11.974, lon: -86.094 },
+      { name: "Close Out Jinotepe", type: "liquidacion", depto: "Carazo", address: "De la Policia 1c. Al norte", schedule: "Lunes a Sábado: 9:30-6:00", lat: 11.85, lon: -86.199 },
+      { name: "Close Out León", type: "normal", depto: "León", address: "Contiguo a Bancentro", schedule: "Lun-Sab: 9:30-6:00, Dom: 9:30-4:00", lat: 12.438, lon: -86.879 },
+      { name: "Close Out Chinandega (74 cord)", type: "liquidacion", depto: "Chinandega", address: "De la esquina de los Bancos, 1c. Arriba, 25vras al norte", schedule: "Lunes a Sábado: 8:30-5:30", lat: 12.63, lon: -87.13 },
+      { name: "Close Out Nagarote", type: "liquidacion", depto: "León", address: "De la esquina de los bancos, 1c. Al este, 1/2 al norte", schedule: "Lunes a Sábado: 8:30-5:30", lat: 12.266, lon: -86.564 },
+      { name: "Close Out Dorado", type: "normal", depto: "Managua", address: "Contiguo al Gallo mas Gallo", schedule: "Lun-Sab: 9:30-6:00, Dom: 9:30-4:00", lat: 12.132, lon: -86.24 },
+      { name: "Close Out CCM Ropa", type: "normal", depto: "Managua", address: "Centro Comercial Managua, Modulo B36 y B37", schedule: "Lunes a Sábado: 9:00-5:30", lat: 12.127, lon: -86.255 },
+      { name: "Close Out CCM Niños", type: "ninos", depto: "Managua", address: "Centro Comercial Managua, Área Infantil", schedule: "Lunes a Sábado: 9:00-5:30", lat: 12.128, lon: -86.255 },
+      { name: "Close Out Hogar CCM", type: "normal", depto: "Managua", address: "Centro Comercial Managua, Modulo B43", schedule: "Lunes a Sábado: 9:00-5:30", lat: 12.128, lon: -86.255 }
+    ];
+
+    const departmentsList = ["Todos", "Managua", "León", "Chinandega", "Masaya", "Carazo", "Estelí"];
+    const categories = [
+      { id: 'all', name: 'Todas', icon: 'fa-shopping-bag', color: 'bg-gray-100 text-gray-700' },
+      { id: 'normal', name: 'Full Price', icon: 'fa-store', color: 'bg-blue-100 text-blue-700' },
+      { id: 'liquidacion', name: 'Liquidación', icon: 'fa-tags', color: 'bg-red-100 text-red-700' },
+      { id: 'ninos', name: 'Niños', icon: 'fa-baby', color: 'bg-green-100 text-green-700' },
+    ];
+
+    // Variables de Estado (INICIAMOS CON LOS DATOS LOCALES PARA QUE NADA DESAPAREZCA)
+    let stores = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
+    let activeCategory = 'all';
+    let activeDepto = 'Todos';
+    let nearestStore = null;
+    let isAdminView = false;
+    
+    // Mapas
+    let clientMap = null;
+    let adminMap = null;
+    let clientMarkers = [];
+    let adminClickMarker = null;
+    let adminSelectedLocation = null;
+
+    // Utilidades
+    window.showToast = function(msg, isError = false) {
+      const container = document.getElementById('toast-container');
+      const t = document.createElement('div');
+      t.className = `px-5 py-3 rounded-xl shadow-lg text-white font-bold animate-fade-in-up text-sm md:text-base pointer-events-auto ${isError ? 'bg-red-500' : 'bg-gray-900'}`;
+      t.innerHTML = isError ? `<i class="fas fa-exclamation-triangle mr-2"></i>${msg}` : `<i class="fas fa-check-circle mr-2 text-green-400"></i>${msg}`;
+      container.appendChild(t);
+      setTimeout(() => t.remove(), 3500);
+    };
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; 
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    // ==========================================
+    // RENDERIZADO DE UI (CARGA INMEDIATA Y OPTIMIZADA PARA MÓVIL)
+    // ==========================================
+    function renderFilters() {
+      // Categorías - Reducido padding en móvil (p-3)
+      const catContainer = document.getElementById('category-buttons');
+      catContainer.innerHTML = categories.map(cat => `
+        <button onclick="setCategory('${cat.id}')" class="flex flex-col items-center justify-center p-3 md:p-5 rounded-xl md:rounded-2xl transition-all duration-200 border-2 ${activeCategory === cat.id ? 'ring-2 ring-offset-1 ring-blue-500 border-transparent shadow-md' : 'border-transparent opacity-80 hover:opacity-100'} ${cat.color}">
+          <div class="mb-1.5 md:mb-2 bg-white/50 p-2 md:p-3 rounded-full shadow-sm"><i class="fas ${cat.icon} text-lg md:text-xl"></i></div>
+          <span class="font-bold text-[11px] md:text-sm text-center">${cat.name}</span>
+        </button>
+      `).join('');
+
+      // Departamentos - Ajuste de tamaño en celular
+      const deptContainer = document.getElementById('depto-buttons');
+      deptContainer.innerHTML = departmentsList.map(dep => `
+        <button onclick="setDepto('${dep}')" class="px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[11px] md:text-xs font-semibold transition-colors ${activeDepto === dep ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${dep}</button>
+      `).join('');
+
+      const btnVerTodo = document.getElementById('btn-ver-todo');
+      if (activeDepto !== 'Todos') btnVerTodo.classList.remove('hidden-view');
+      else btnVerTodo.classList.add('hidden-view');
+
+      document.getElementById('grid-title').innerText = activeDepto === 'Todos' ? 'Todas las Sucursales' : `Sucursales en ${activeDepto}`;
+    }
+
+    function renderStoresList() {
+      const filtered = stores.filter(store => 
+        (activeCategory === 'all' || store.type === activeCategory) && 
+        (activeDepto === 'Todos' || store.depto === activeDepto)
+      );
+
+      document.getElementById('grid-count').innerText = `${filtered.length} ${filtered.length === 1 ? 'resultado' : 'resultados'}`;
+      const grid = document.getElementById('stores-grid');
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white p-8 md:p-10 rounded-2xl text-center border border-gray-100 shadow-sm">
+            <i class="fas fa-store text-gray-300 text-4xl md:text-5xl mb-2 md:mb-3"></i>
+            <h3 class="text-base md:text-lg font-bold text-gray-700 mb-1">No encontramos sucursales</h3>
+            <p class="text-xs md:text-sm text-gray-500">Intenta seleccionar otro departamento o limpiar los filtros.</p>
+          </div>`;
+      } else {
+        grid.innerHTML = filtered.map(store => {
+          const isNearest = nearestStore && nearestStore.id === store.id;
+          const colorClass = store.type === 'normal' ? 'blue' : store.type === 'liquidacion' ? 'red' : 'green';
+          const icon = store.type === 'normal' ? 'fa-store' : store.type === 'liquidacion' ? 'fa-tags' : 'fa-baby';
+          const label = store.type === 'normal' ? 'Full Price' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
+
+          return `
+          <div class="bg-white rounded-xl md:rounded-2xl shadow-sm border transition-all duration-300 overflow-hidden group flex flex-col ${isNearest ? 'border-emerald-400 ring-2 ring-emerald-100' : 'border-gray-100 hover:shadow-md'}">
+            <div class="h-1 md:h-1.5 w-full bg-${colorClass}-500"></div>
+            <div class="p-4 md:p-5 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
+                <h4 class="text-base md:text-lg font-bold text-gray-900 group-hover:text-${colorClass}-600 transition-colors leading-tight pr-2">${store.name}</h4>
+                <span class="p-1.5 md:p-2 rounded-full flex-shrink-0 bg-${colorClass}-50 text-${colorClass}-600">
+                  <i class="fas ${icon} text-xs md:text-sm"></i>
+                </span>
+              </div>
+              <div class="space-y-2 md:space-y-2.5 flex-grow">
+                <div class="flex items-start text-xs md:text-sm text-gray-600">
+                  <i class="fas fa-map-marker-alt mr-1.5 mt-0.5 shrink-0 ${isNearest ? 'text-emerald-500' : 'text-gray-400'}"></i>
+                  <span class="line-clamp-2 leading-snug">${store.address}</span>
+                </div>
+                <div class="flex items-center flex-wrap gap-1.5 pt-2 border-t border-gray-50">
+                  <span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] md:text-xs font-semibold">${store.depto}</span>
+                  <span class="px-2 py-0.5 rounded text-[9px] md:text-[10px] font-bold uppercase tracking-wide text-${colorClass}-700 bg-${colorClass}-50">
+                    ${label}
+                  </span>
+                </div>
+              </div>
+              <div class="pt-2 md:pt-3 mt-2 md:mt-3 border-t border-gray-50 text-[11px] md:text-xs text-gray-500 font-medium"><i class="far fa-clock mr-1"></i> ${store.schedule}</div>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      renderClientMarkers(filtered);
+    }
+
+    function renderAdminTable() {
+      const tbody = document.getElementById('admin-table-body');
+      tbody.innerHTML = stores.map(store => {
+        const typeClass = store.type === 'normal' ? 'bg-blue-100 text-blue-800' : store.type === 'liquidacion' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+        return `
+          <tr class="hover:bg-gray-50 border-b border-gray-100 last:border-0">
+            <td class="px-4 md:px-6 py-3 md:py-4">
+              <div class="font-bold text-gray-900 text-xs md:text-sm">${store.name}</div>
+              <div class="text-[10px] md:text-xs text-gray-400 mt-0.5">Lat: ${store.lat.toFixed(4)}, Lon: ${store.lon.toFixed(4)}</div>
+            </td>
+            <td class="px-4 md:px-6 py-3 md:py-4">
+              <span class="px-2 inline-flex text-[9px] md:text-xs leading-4 md:leading-5 font-semibold rounded-full uppercase ${typeClass}">${store.type}</span>
+              <div class="text-[10px] md:text-sm text-gray-500 mt-1">${store.depto}</div>
+            </td>
+            <td class="px-4 md:px-6 py-3 md:py-4 hidden sm:table-cell">
+              <div class="text-xs md:text-sm text-gray-900 line-clamp-2">${store.address}</div>
+              <div class="text-[10px] md:text-xs text-gray-500 mt-0.5">${store.schedule}</div>
+            </td>
+            <td class="px-4 md:px-6 py-3 md:py-4 text-right">
+              <button onclick="deleteStore('${store.id}')" class="text-red-600 hover:text-red-900 bg-red-50 p-1.5 md:p-2 rounded-md transition-colors"><i class="fas fa-trash text-xs md:text-base"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // LLAMADA INMEDIATA
+    renderFilters();
+    renderStoresList();
+
+    // ==========================================
+    // MAPAS DE GOOGLE
+    // ==========================================
+    window.initMaps = function() {
+      clientMap = new google.maps.Map(document.getElementById('client-map'), {
+        center: { lat: 12.136, lng: -86.251 },
+        zoom: 12, mapTypeControl: false, streetViewControl: false, gestureHandling: 'greedy' // greedy ayuda en móviles
+      });
+
+      adminMap = new google.maps.Map(document.getElementById('admin-map'), {
+        center: { lat: 12.136, lng: -86.251 },
+        zoom: 12, mapTypeControl: false, streetViewControl: false, cursor: 'crosshair', gestureHandling: 'greedy'
+      });
+
+      adminMap.addListener('click', (e) => {
+        const lat = e.latLng.lat();
+        const lon = e.latLng.lng();
+        adminSelectedLocation = { lat, lon };
+        
+        if (adminClickMarker) adminClickMarker.setMap(null);
+        adminClickMarker = new google.maps.Marker({
+          position: { lat, lng: lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        });
+        
+        document.getElementById('modal-map-status').className = 'text-xs md:text-sm font-bold text-green-600 flex items-center';
+        document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-map-marker-alt mr-1"></i> Ubicación lista';
+        document.getElementById('btn-save-store').disabled = false;
+      });
+
+      renderClientMarkers();
+    };
+
+    function renderClientMarkers(filtered = stores) {
+      if (!clientMap || !window.google) return;
+
+      clientMarkers.forEach(m => m.setMap(null));
+      clientMarkers = [];
+
+      if (filtered.length === 0) {
+        clientMap.setCenter({ lat: 12.8654, lng: -85.2072 });
+        clientMap.setZoom(7);
+        return;
+      }
+
+      const bounds = new google.maps.LatLngBounds();
+
+      filtered.forEach(store => {
+        const isNearest = nearestStore && nearestStore.id === store.id;
+        const marker = new google.maps.Marker({
+          position: { lat: store.lat, lng: store.lon },
+          map: clientMap,
+          title: store.name,
+          icon: isNearest ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<div style="color: #1f2937; padding: 2px; font-family: sans-serif; max-width: 200px;"><h3 style="font-weight: bold; font-size: 13px; margin-bottom: 2px;">${store.name}</h3><p style="font-size: 11px; margin: 0; line-height: 1.2;">${store.address}</p></div>`
+        });
+        marker.addListener('click', () => infoWindow.open(clientMap, marker));
+        
+        clientMarkers.push(marker);
+        bounds.extend({ lat: store.lat, lng: store.lon });
+      });
+
+      if (nearestStore) {
+        clientMap.setCenter({ lat: nearestStore.lat, lng: nearestStore.lon });
+        clientMap.setZoom(15);
+      } else if (filtered.length === 1) {
+        clientMap.setCenter({ lat: filtered[0].lat, lng: filtered[0].lon });
+        clientMap.setZoom(15);
+      } else {
+        clientMap.fitBounds(bounds);
+        const listener = google.maps.event.addListener(clientMap, 'idle', function() { 
+          if (clientMap.getZoom() > 14) clientMap.setZoom(14); 
+          google.maps.event.removeListener(listener); 
+        });
+      }
+    }
+
+    // Cargar Script de Google Maps
+    const mapScript = document.createElement('script');
+    mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMaps`;
+    mapScript.async = true;
+    document.head.appendChild(mapScript);
+
+    // ==========================================
+    // LÓGICA DE INTERACCIÓN GLOBAL
+    // ==========================================
+    window.setCategory = function(catId) {
+      activeCategory = catId;
+      nearestStore = null;
+      document.getElementById('nearest-store-container').classList.add('hidden-view');
+      renderFilters();
+      renderStoresList();
+    };
+
+    window.setDepto = function(dep) {
+      activeDepto = dep;
+      nearestStore = null;
+      document.getElementById('nearest-store-container').classList.add('hidden-view');
+      renderFilters();
+      renderStoresList();
+    };
+
+    document.getElementById('btn-ver-todo').onclick = () => setDepto('Todos');
+
+    document.getElementById('btn-locate').onclick = () => {
+      const btnText = document.getElementById('btn-locate-text');
+      const errCont = document.getElementById('location-error');
+      
+      btnText.innerText = "Buscando...";
+      errCont.classList.add('hidden-view');
+      nearestStore = null;
+
+      if (!navigator.geolocation) {
+        document.getElementById('location-error-text').innerText = 'Tu navegador no soporta geolocalización.';
+        errCont.classList.remove('hidden-view');
+        btnText.innerText = "La más cercana";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLat = position.coords.latitude;
+          const userLon = position.coords.longitude;
+          let minDistance = Infinity;
+          let closest = null;
+
+          stores.forEach(s => {
+            const distance = calculateDistance(userLat, userLon, s.lat, s.lon);
+            if (distance < minDistance) {
+              minDistance = distance;
+              closest = { ...s, distance: distance.toFixed(1) };
+            }
+          });
+
+          if(closest) {
+            nearestStore = closest;
+            activeDepto = closest.depto;
+            
+            document.getElementById('nearest-name').innerText = closest.name;
+            document.getElementById('nearest-address').innerText = closest.address;
+            document.getElementById('nearest-distance').innerText = closest.distance;
+            document.getElementById('nearest-store-container').classList.remove('hidden-view');
+            
+            renderFilters();
+            renderStoresList();
+            
+            // Hacer scroll suave hacia la tarjeta del resultado en móviles
+            document.getElementById('nearest-store-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          btnText.innerText = "La más cercana";
+        },
+        () => {
+          document.getElementById('location-error-text').innerText = 'Revisa los permisos de ubicación de tu navegador.';
+          errCont.classList.remove('hidden-view');
+          btnText.innerText = "La más cercana";
+        }
+      );
+    };
+
+    // ==========================================
+    // LÓGICA DE ADMINISTRADOR Y MODALES
+    // ==========================================
+    window.toggleAdminView = function(forceClient = false) {
+      if (forceClient || isAdminView) {
+        isAdminView = false;
+        document.getElementById('client-view').classList.remove('hidden-view');
+        document.getElementById('admin-view').classList.add('hidden-view');
+        document.getElementById('logo-text').classList.replace('text-gray-500', 'text-blue-600');
+        document.getElementById('logo-bg').classList.replace('bg-gray-800', 'bg-blue-600');
+        document.getElementById('btn-admin-text').innerText = 'Modo Admin';
+        document.getElementById('btn-admin-text-mobile').innerText = 'Admin';
+        document.getElementById('btn-admin-toggle').className = "flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200";
+        if(clientMap) google.maps.event.trigger(clientMap, "resize");
+      } else {
+        document.getElementById('password-modal').classList.remove('hidden-view');
+        document.getElementById('admin-password').focus();
+      }
+    };
+
+    document.getElementById('btn-admin-toggle').onclick = () => toggleAdminView(false);
+
+    window.closePasswordModal = function() {
+      document.getElementById('password-modal').classList.add('hidden-view');
+      document.getElementById('password-error').classList.add('hidden-view');
+      document.getElementById('admin-password').value = '';
+    };
+
+    document.getElementById('password-form').onsubmit = (e) => {
+      e.preventDefault();
+      const val = document.getElementById('admin-password').value;
+      if (val === ADMIN_PASSWORD) {
+        closePasswordModal();
+        isAdminView = true;
+        document.getElementById('client-view').classList.add('hidden-view');
+        document.getElementById('admin-view').classList.remove('hidden-view');
+        document.getElementById('logo-text').classList.replace('text-blue-600', 'text-gray-500');
+        document.getElementById('logo-bg').classList.replace('bg-blue-600', 'bg-gray-800');
+        document.getElementById('btn-admin-text').innerText = 'Salir Admin';
+        document.getElementById('btn-admin-text-mobile').innerText = 'Salir';
+        document.getElementById('btn-admin-toggle').className = "flex items-center space-x-1.5 md:space-x-2 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 rounded-full transition-colors bg-red-100 text-red-600 hover:bg-red-200";
+        renderAdminTable();
+      } else {
+        document.getElementById('password-error').classList.remove('hidden-view');
+      }
+    };
+
+    window.openAddModal = function() {
+      const select = document.getElementById('f-depto');
+      select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
+      
+      document.getElementById('add-modal').classList.remove('hidden-view');
+      if(adminMap) {
+        google.maps.event.trigger(adminMap, "resize");
+        adminMap.setCenter({ lat: 12.136, lng: -86.251 });
+      }
+    };
+
+    window.closeAddModal = function() {
+      document.getElementById('add-modal').classList.add('hidden-view');
+      document.getElementById('add-store-form').reset();
+      adminSelectedLocation = null;
+      if (adminClickMarker) adminClickMarker.setMap(null);
+      document.getElementById('modal-map-status').className = 'text-xs md:text-sm font-bold text-red-500 flex items-center';
+      document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-exclamation-circle mr-1"></i> Marca en el mapa 👉';
+      document.getElementById('btn-save-store').disabled = true;
+    };
+
+    // ==========================================
+    // CONEXIÓN A FIREBASE (Se ejecuta en segundo plano)
+    // ==========================================
+    const initFirebaseData = async () => {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
+        
+        onSnapshot(storesRef, (snapshot) => {
+          // Si la base de datos de Firebase responde y tiene datos, actualiza lo local.
+          if (!snapshot.empty) {
+            stores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderFilters();
+            renderStoresList();
+            if (isAdminView) renderAdminTable();
+          }
+        }, (err) => {
+          console.error("Firebase no está configurado o bloqueado. Usando modo local puro.");
+        });
+
+      } catch (error) {
+        console.error("Auth error:", error);
+      }
+    };
+
+    initFirebaseData();
+
+    // Guardar Tienda
+    document.getElementById('add-store-form').onsubmit = async (e) => {
+      e.preventDefault();
+      if (!adminSelectedLocation) return;
+      
+      const newStore = {
+        name: document.getElementById('f-name').value,
+        type: document.getElementById('f-type').value,
+        depto: document.getElementById('f-depto').value,
+        address: document.getElementById('f-address').value,
+        schedule: document.getElementById('f-schedule').value,
+        lat: adminSelectedLocation.lat,
+        lon: adminSelectedLocation.lon
+      };
+
+      try {
+        const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
+        await addDoc(storesRef, newStore);
+        closeAddModal();
+        showToast("Sucursal guardada correctamente");
+      } catch (error) {
+        console.error(error);
+        showToast("Error al guardar en Firebase. Verifique permisos.", true);
+      }
+    };
+
+    // Eliminar
+    window.deleteStore = async (id) => {
+      if(confirm("¿Estás seguro de eliminar esta sucursal permanentemente?")) {
+        try {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id));
+          showToast("Sucursal eliminada");
+        } catch (error) {
+          showToast("Error al eliminar", true);
+        }
+      }
+    };
+
+    // Restaurar Base
+    window.restoreBaseStores = async () => {
+      if(confirm("¿Quieres agregar automáticamente todas las ubicaciones base de Close Out a la base de datos?")) {
+        try {
+          const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
+          for (const store of initialStoresData) {
+            await addDoc(storesRef, store);
+          }
+          showToast("¡Tiendas base agregadas exitosamente!");
+        } catch (error) {
+          showToast("Hubo un error al agregar las tiendas", true);
+        }
+      }
+    };
+
+  </script>
+</body>
+</html>
