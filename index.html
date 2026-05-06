@@ -27,7 +27,8 @@
             brand: {
               blue: '#002D72', 
               red: '#E30613',  
-              green: '#00A650' 
+              green: '#00A650',
+              yellow: '#F59E0B'
             }
           },
           boxShadow: {
@@ -104,6 +105,10 @@
 </head>
 <body class="bg-[#F8FAFC] dark:bg-[#0B1121] font-sans text-gray-800 dark:text-gray-200 min-h-screen overflow-x-hidden transition-colors duration-500 relative">
 
+  <!-- Elementos invisibles de soporte -->
+  <div id="logo-bg" class="hidden"></div>
+  <span id="logo-text" class="hidden text-gray-400"></span>
+
   <!-- Elementos decorativos de fondo (Blobs) -->
   <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-grid-pattern">
     <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 blur-[100px] animate-float"></div>
@@ -116,24 +121,14 @@
   <!-- HEADER -->
   <header class="glass shadow-sm sticky top-0 z-40 transition-colors duration-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
-      <div class="flex items-center space-x-3 cursor-pointer group" onclick="toggleAdminView(false)">
-        <div id="logo-bg" class="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-brand-red to-[#b3000b] shadow-lg shadow-brand-red/30 group-hover:scale-105 transition-transform duration-300">
-          <i class="fas fa-shopping-bag text-white text-lg md:text-xl"></i>
-        </div>
-        <h1 class="text-2xl md:text-3xl font-display font-black tracking-tight leading-none">
-          <span class="text-brand-blue dark:text-blue-400">Close</span><span class="text-brand-red">Out</span>
-          <span id="logo-text" class="block md:inline text-xs md:text-sm text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-0.5 md:mt-0 md:ml-2">Nica</span>
-        </h1>
+      <div class="flex items-center cursor-pointer group" onclick="toggleAdminView(false)">
+        <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-md">
       </div>
-      
       <div class="flex items-center space-x-3">
-        <!-- Botón Tema -->
         <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:scale-110 transition-all duration-300">
           <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm"></i>
           <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm"></i>
         </button>
-
-        <!-- Botón Admin -->
         <button id="btn-admin-toggle" class="flex items-center space-x-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-full transition-all duration-300 bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:text-brand-blue dark:hover:text-blue-400 hover:shadow-md">
           <i class="fas fa-sliders-h"></i> <span class="hidden sm:inline" id="btn-admin-text">Panel Admin</span>
         </button>
@@ -157,9 +152,8 @@
       </div>
     </div>
 
-    <!-- Geolocalización Banner Premium -->
+    <!-- Geolocalización Banner -->
     <div class="relative overflow-hidden rounded-[2rem] p-6 md:p-10 text-white mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between border border-white/10 group">
-      <!-- Background Abstracto -->
       <div class="absolute inset-0 bg-gradient-to-br from-brand-blue via-[#001f52] to-[#00102e] dark:from-[#051126] dark:via-[#020814] dark:to-black -z-10"></div>
       <div class="absolute top-0 right-0 w-64 h-64 bg-brand-red/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
       
@@ -203,7 +197,7 @@
     <!-- DISEÑO DE MAPA Y SUCURSALES -->
     <div class="flex flex-col gap-10 md:gap-14">
       
-      <!-- Mapa Cliente Premium -->
+      <!-- Mapa Cliente -->
       <div class="w-full">
         <div class="glass rounded-[2rem] shadow-soft border border-gray-200/50 dark:border-gray-700/50 p-4 md:p-6 lg:p-8">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
@@ -223,7 +217,6 @@
           
           <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] bg-gray-200 dark:bg-gray-800 rounded-2xl md:rounded-[1.5rem] overflow-hidden shadow-inner ring-1 ring-gray-900/5 dark:ring-white/5">
             <div id="client-map" class="absolute inset-0 w-full h-full"></div>
-            <!-- Overlay decorativo interior -->
             <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_40px_rgba(0,0,0,0.5)]"></div>
           </div>
         </div>
@@ -323,14 +316,14 @@
     </div>
   </div>
 
-  <!-- MODAL AGREGAR SUCURSAL -->
+  <!-- MODAL AGREGAR / EDITAR SUCURSAL -->
   <div id="add-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
     <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up border border-gray-100 dark:border-gray-700">
       
       <div class="w-full md:w-1/2 p-6 md:p-8 overflow-y-auto flex-shrink-0 custom-scrollbar">
         <div class="flex justify-between items-center mb-8">
           <div>
-            <h3 class="text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
+            <h3 id="modal-title" class="text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
                Nueva Sucursal
             </h3>
             <p class="text-sm text-gray-500 font-medium mt-1">Completa los datos y marca en el mapa.</p>
@@ -349,7 +342,7 @@
             <div>
               <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Categoría</label>
               <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none">
-                <option value="normal">Full Price</option>
+                <option value="normal">General</option>
                 <option value="liquidacion">Liquidación</option>
                 <option value="ninos">Niños</option>
               </select>
@@ -397,7 +390,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- MODO OSCURO LÓGICA ---
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -472,12 +465,12 @@
 
     const departmentsList = ["Todos", "Managua", "León", "Chinandega", "Masaya", "Carazo", "Estelí"];
     
-    // Categorías con estilos premium
+    // Categorías modificadas con Imágenes Oficiales
     const categories = [
-      { id: 'all', name: 'Todas', icon: 'fa-layer-group', iconColor: 'text-gray-600 dark:text-gray-300', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
-      { id: 'normal', name: 'Full Price', icon: 'fa-gem', iconColor: 'text-brand-blue dark:text-blue-400', bgColor: 'bg-brand-blue/5 dark:bg-brand-blue/10', hoverBg: 'hover:bg-brand-blue/10 dark:hover:bg-brand-blue/20', activeRing: 'ring-brand-blue/50 dark:ring-blue-400/50' },
-      { id: 'liquidacion', name: 'Liquidación', icon: 'fa-tags', iconColor: 'text-brand-red', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-brand-red/10 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50' },
-      { id: 'ninos', name: 'Niños', icon: 'fa-child', iconColor: 'text-brand-green', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-brand-green/10 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
+      { id: 'all', name: 'Todas', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
+      { id: 'normal', name: 'General', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-blue/5 dark:bg-brand-blue/10', hoverBg: 'hover:bg-brand-blue/10 dark:hover:bg-brand-blue/20', activeRing: 'ring-brand-blue/50 dark:ring-blue-400/50' },
+      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/5 dark:bg-brand-yellow/10', hoverBg: 'hover:bg-yellow-50 dark:hover:bg-brand-yellow/20', activeRing: 'ring-brand-yellow/50' },
+      { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
     ];
 
     let stores = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
@@ -486,6 +479,10 @@
     let nearestStore = null;
     let isAdminView = false;
     let clientMap = null, adminMap = null, clientMarkers = [], adminClickMarker = null, adminSelectedLocation = null;
+    
+    // Identificador para saber si estamos editando
+    let editStoreId = null;
+    let firebaseHasLoaded = false;
 
     window.showToast = function(msg, isError = false) {
       const container = document.getElementById('toast-container');
@@ -493,7 +490,7 @@
       t.className = `glass px-5 py-4 rounded-2xl shadow-xl text-gray-900 dark:text-white font-bold animate-fade-in-up text-sm flex items-center border-l-4 ${isError ? 'border-brand-red' : 'border-brand-green'}`;
       t.innerHTML = isError ? `<div class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center mr-3"><i class="fas fa-exclamation text-brand-red"></i></div>${msg}` : `<div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center mr-3"><i class="fas fa-check text-brand-green"></i></div>${msg}`;
       container.appendChild(t);
-      setTimeout(() => t.remove(), 4000);
+      setTimeout(() => t.remove(), 6000);
     };
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -505,16 +502,16 @@
     }
 
     function renderFilters() {
-      // Categorías - Estilo tarjeta moderna flotante
       const catContainer = document.getElementById('category-buttons');
       catContainer.innerHTML = categories.map(cat => `
         <button onclick="setCategory('${cat.id}')" class="group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor}` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}">
-          <div class="mb-3 w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-soft ${cat.iconColor} group-hover:scale-110 transition-transform duration-300"><i class="fas ${cat.icon} text-xl"></i></div>
-          <span class="font-display font-bold text-xs md:text-sm text-center text-gray-800 dark:text-gray-200 tracking-wide">${cat.name}</span>
+          <div class="mb-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-md group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300 overflow-hidden p-3 border-2 border-gray-100 dark:border-gray-700">
+            <img src="${cat.imgUrl}" alt="${cat.name}" class="w-full h-full object-contain drop-shadow-md group-hover:scale-105 transition-transform">
+          </div>
+          <span class="font-display font-black text-sm md:text-lg text-center text-gray-800 dark:text-gray-200 tracking-wide mt-2">${cat.name}</span>
         </button>
       `).join('');
 
-      // Departamentos - Estilo Pill minimalista
       const deptContainer = document.getElementById('depto-buttons');
       deptContainer.innerHTML = departmentsList.map(dep => `
         <button onclick="setDepto('${dep}')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 ${activeDepto === dep ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md transform scale-105' : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'}">${dep}</button>
@@ -527,7 +524,6 @@
         (activeDepto === 'Todos' || store.depto === activeDepto)
       );
 
-      // Animación al actualizar número
       const gridCount = document.getElementById('grid-count');
       gridCount.innerText = `${filtered.length}`;
       gridCount.classList.remove('animate-pulse');
@@ -541,43 +537,53 @@
           <div class="col-span-full bg-white dark:bg-gray-800 p-12 rounded-[2rem] text-center border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
             <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-store-slash text-gray-300 dark:text-gray-600 text-3xl"></i></div>
             <h3 class="text-xl font-display font-black text-gray-900 dark:text-white mb-2">Sin resultados</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-xs">Intenta cambiar de departamento o borrar los filtros actuales.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-xs">Aún no hay tiendas en esta selección.</p>
           </div>`;
       } else {
         grid.innerHTML = filtered.map((store, index) => {
           const isNearest = nearestStore && nearestStore.id === store.id;
-          const colorPrefix = store.type === 'normal' ? 'brand-blue' : store.type === 'liquidacion' ? 'brand-red' : 'brand-green';
-          const bgHover = store.type === 'normal' ? 'hover:bg-blue-50/50 dark:hover:bg-brand-blue/10' : store.type === 'liquidacion' ? 'hover:bg-red-50/50 dark:hover:bg-brand-red/10' : 'hover:bg-green-50/50 dark:hover:bg-brand-green/10';
-          const icon = store.type === 'normal' ? 'fa-gem' : store.type === 'liquidacion' ? 'fa-tags' : 'fa-child';
-          const label = store.type === 'normal' ? 'Full Price' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
+          const imgUrl = store.type === 'normal' ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : store.type === 'liquidacion' ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png';
+          const label = store.type === 'normal' ? 'General' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
+          
+          const textColorClass = store.type === 'normal' ? 'text-brand-blue' : store.type === 'liquidacion' ? 'text-brand-yellow' : 'text-brand-green';
+          const bgLightClass = store.type === 'normal' ? 'bg-brand-blue/10' : store.type === 'liquidacion' ? 'bg-brand-yellow/10' : 'bg-brand-green/10';
+          const bgSolidClass = store.type === 'normal' ? 'bg-brand-blue' : store.type === 'liquidacion' ? 'bg-brand-yellow' : 'bg-brand-green';
+          const bgHoverClass = store.type === 'normal' ? 'hover:bg-blue-50/50 dark:hover:bg-brand-blue/10' : store.type === 'liquidacion' ? 'hover:bg-yellow-50/50 dark:hover:bg-brand-yellow/10' : 'hover:bg-green-50/50 dark:hover:bg-brand-green/10';
 
           return `
-          <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up ${bgHover} hover:shadow-xl hover:-translate-y-1" style="animation-delay: ${index * 0.05}s">
-            ${isNearest ? `<div class="absolute inset-0 border-2 border-brand-green rounded-[1.5rem] pointer-events-none z-10"></div><div class="absolute top-0 right-0 bg-brand-green text-white text-[10px] font-black px-3 py-1 rounded-bl-xl z-20">¡MÁS CERCANA!</div>` : ''}
+          <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up ${bgHoverClass} hover:shadow-xl hover:-translate-y-1" style="animation-delay: ${index * 0.05}s">
+            ${isNearest ? `<div class="absolute inset-0 border-2 border-brand-green rounded-[1.5rem] pointer-events-none z-20"></div><div class="absolute top-0 right-0 bg-brand-green text-white text-[10px] font-black px-3 py-1 rounded-bl-xl z-30">¡MÁS CERCANA!</div>` : ''}
             
-            <div class="p-6 md:p-7 flex flex-col flex-grow relative z-0">
-              <div class="flex justify-between items-start mb-4">
-                <div class="pr-3">
-                  <span class="inline-block px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest text-${colorPrefix} bg-${colorPrefix}/10 mb-2">${label}</span>
-                  <h4 class="text-lg md:text-xl font-display font-black text-gray-900 dark:text-white leading-tight tracking-tight">${store.name}</h4>
+            <!-- MARCA DE AGUA DEL LOGO EN EL FONDO -->
+            <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.07] dark:opacity-[0.12] flex items-center justify-center p-2 md:p-4 transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.1] dark:group-hover:opacity-[0.15]">
+              <img src="${imgUrl}" class="w-full h-full object-contain" alt="">
+            </div>
+            
+            <div class="p-6 md:p-7 flex flex-col flex-grow relative z-10">
+              <div class="flex justify-between items-start mb-4 gap-4">
+                <div class="pr-0">
+                  <span class="inline-block px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${textColorClass} ${bgLightClass} mb-2 shadow-sm backdrop-blur-sm">${label}</span>
+                  <h4 class="text-xl md:text-2xl font-display font-black text-gray-900 dark:text-white leading-tight tracking-tight">${store.name}</h4>
                 </div>
-                <div class="w-10 h-10 rounded-xl flex-shrink-0 bg-${colorPrefix}/5 flex items-center justify-center text-${colorPrefix} group-hover:scale-110 transition-transform shadow-inner border border-${colorPrefix}/10">
-                  <i class="fas ${icon}"></i>
+                <!-- Mini Logo por Tarjeta DESTACADO -->
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex-shrink-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-all shadow-md group-hover:shadow-xl border border-gray-100 dark:border-gray-700 p-2 md:p-3">
+                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain drop-shadow-sm">
                 </div>
               </div>
               
               <div class="space-y-3 flex-grow mt-2">
-                <div class="flex items-start text-sm text-gray-500 dark:text-gray-400 font-medium">
-                  <i class="fas fa-map-pin mr-2 mt-1 text-gray-300 dark:text-gray-600 group-hover:text-${colorPrefix} transition-colors"></i>
+                <div class="flex items-start text-sm text-gray-600 dark:text-gray-300 font-medium">
+                  <i class="fas fa-map-pin mr-2 mt-1 text-gray-400 dark:text-gray-500 transition-colors"></i>
                   <span class="line-clamp-2 leading-relaxed">${store.address}</span>
                 </div>
               </div>
               
-              <div class="pt-4 mt-5 border-t border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
-                <span class="text-xs font-bold text-gray-400 dark:text-gray-500"><i class="far fa-clock mr-1.5"></i>${store.schedule.split(':')[0]}</span>
-                <span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold">${store.depto}</span>
+              <div class="pt-4 mt-5 border-t border-gray-200/60 dark:border-gray-700/60 flex items-center justify-between">
+                <span class="text-xs font-bold text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1.5"></i>${store.schedule.split(':')[0]}</span>
+                <span class="bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold">${store.depto}</span>
               </div>
             </div>
+            <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10"></div>
           </div>`;
         }).join('');
       }
@@ -588,7 +594,10 @@
     function renderAdminTable() {
       const tbody = document.getElementById('admin-table-body');
       tbody.innerHTML = stores.map(store => {
-        const colorPrefix = store.type === 'normal' ? 'brand-blue' : store.type === 'liquidacion' ? 'brand-red' : 'brand-green';
+        const textColorClass = store.type === 'normal' ? 'text-brand-blue' : store.type === 'liquidacion' ? 'text-brand-yellow' : 'text-brand-green';
+        const bgLightClass = store.type === 'normal' ? 'bg-brand-blue/10' : store.type === 'liquidacion' ? 'bg-brand-yellow/10' : 'bg-brand-green/10';
+        const label = store.type === 'normal' ? 'General' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
+
         return `
           <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors">
             <td class="px-6 py-4">
@@ -596,24 +605,22 @@
               <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
             </td>
             <td class="px-6 py-4">
-              <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest bg-${colorPrefix}/10 text-${colorPrefix}">${store.type}</span>
+              <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest ${bgLightClass} ${textColorClass}">${label}</span>
               <div class="text-xs text-gray-500 dark:text-gray-400 mt-2 font-bold"><i class="fas fa-map-marker-alt mr-1 text-gray-300"></i>${store.depto}</div>
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
               <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium">${store.address}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-bold"><i class="far fa-clock mr-1"></i>${store.schedule}</div>
             </td>
-            <td class="px-6 py-4 text-right">
-              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 dark:bg-red-900/10 hover:bg-brand-red p-2.5 rounded-xl transition-colors shadow-sm"><i class="fas fa-trash-alt"></i></button>
+            <td class="px-6 py-4 text-right whitespace-nowrap">
+              <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 dark:bg-blue-900/10 hover:bg-brand-blue p-2.5 rounded-xl transition-colors shadow-sm mr-2" title="Editar"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 dark:bg-red-900/10 hover:bg-brand-red p-2.5 rounded-xl transition-colors shadow-sm" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // ==========================================
-    // LLAMADA INMEDIATA: Evita que la página se quede en blanco
-    // ==========================================
     renderFilters();
     renderStoresList();
 
@@ -704,7 +711,7 @@
       if (nearestStore) {
         clientMap.setCenter({ lat: nearestStore.lat, lng: nearestStore.lon });
         clientMap.setZoom(16);
-        setTimeout(() => clientMarkers.find(m => m.title === nearestStore.name)?.setAnimation(null), 3000); // Para el rebote
+        setTimeout(() => clientMarkers.find(m => m.title === nearestStore.name)?.setAnimation(null), 3000); 
       } else if (filtered.length === 1) {
         clientMap.setCenter({ lat: filtered[0].lat, lng: filtered[0].lon });
         clientMap.setZoom(15);
@@ -828,20 +835,76 @@
       }
     };
 
-    window.openAddModal = function() {
+    window.openAddModal = function(isEdit = false) {
       const select = document.getElementById('f-depto');
       select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
+      
+      if (!isEdit) {
+        document.getElementById('modal-title').innerHTML = 'Nueva Sucursal';
+        document.getElementById('add-store-form').reset();
+        adminSelectedLocation = null;
+        if (adminClickMarker) adminClickMarker.setMap(null);
+        document.getElementById('btn-save-store').disabled = true;
+        
+        const statusEl = document.getElementById('modal-map-status');
+        statusEl.className = 'text-sm font-bold text-gray-400 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg';
+        statusEl.innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
+      }
+
       document.getElementById('add-modal').classList.remove('hidden-view');
+      
       if(adminMap) {
         google.maps.event.trigger(adminMap, "resize");
-        adminMap.setCenter({ lat: 12.136, lng: -86.251 });
+        if (!isEdit) {
+           adminMap.setCenter({ lat: 12.136, lng: -86.251 });
+        } else if (adminSelectedLocation) {
+           adminMap.setCenter(adminSelectedLocation);
+        }
       }
+    };
+
+    window.editStore = function(id) {
+      if (id.startsWith('local-')) {
+          showToast("Esta sucursal es local. Para editarla, primero usa 'Restaurar Base' para guardarla en la nube.", true);
+          return;
+      }
+
+      const store = stores.find(s => s.id === id);
+      if (!store) return;
+      
+      editStoreId = id;
+      
+      // Llenamos el formulario con los datos de la sucursal existente
+      document.getElementById('f-name').value = store.name;
+      document.getElementById('f-type').value = store.type;
+      document.getElementById('f-address').value = store.address;
+      document.getElementById('f-schedule').value = store.schedule;
+      
+      openAddModal(true);
+      
+      document.getElementById('f-depto').value = store.depto;
+      document.getElementById('modal-title').innerHTML = 'Editar Sucursal';
+      
+      // Colocamos el marcador en el mapa
+      adminSelectedLocation = { lat: store.lat, lon: store.lon };
+      if (adminClickMarker) adminClickMarker.setMap(null);
+      if (adminMap && window.google) {
+        adminClickMarker = new google.maps.Marker({
+          position: { lat: store.lat, lng: store.lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        });
+      }
+      
+      document.getElementById('btn-save-store').disabled = false;
+      const statusEl = document.getElementById('modal-map-status');
+      statusEl.className = 'text-sm font-bold text-brand-blue flex items-center bg-blue-50 dark:bg-blue-900/20 py-2 px-4 rounded-lg';
+      statusEl.innerHTML = '<i class="fas fa-edit mr-2"></i> Ubicación cargada';
     };
 
     window.closeAddModal = function() {
       document.getElementById('add-modal').classList.add('hidden-view');
       document.getElementById('add-store-form').reset();
       adminSelectedLocation = null;
+      editStoreId = null; 
       if (adminClickMarker) adminClickMarker.setMap(null);
       
       const statusEl = document.getElementById('modal-map-status');
@@ -861,25 +924,30 @@
         const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
         
         onSnapshot(storesRef, (snapshot) => {
+          // Solución al Borrado Fantasma: 
+          // Si Firebase carga, manda Firebase. Incluso si está vacío, actualizamos para reflejar que la borraste.
           if (!snapshot.empty) {
+            firebaseHasLoaded = true;
             stores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            // Obligamos a que se dibuje de nuevo por si se actualizaron datos en vivo
-            renderFilters();
-            renderStoresList();
-            if (isAdminView) renderAdminTable();
+          } else if (firebaseHasLoaded) {
+            // Si borraron la última sucursal real de Firebase, dejamos la lista vacía
+            stores = [];
           }
+          
+          renderFilters();
+          renderStoresList();
+          if (isAdminView) renderAdminTable();
         }, (err) => console.error("Usando modo local puro."));
       } catch (error) { console.error("Auth error:", error); }
     };
     
-    // Iniciar conexión con Firebase en segundo plano
     initFirebaseData();
 
     document.getElementById('add-store-form').onsubmit = async (e) => {
       e.preventDefault();
       if (!adminSelectedLocation) return;
       
-      const newStore = {
+      const storeData = {
         name: document.getElementById('f-name').value,
         type: document.getElementById('f-type').value,
         depto: document.getElementById('f-depto').value,
@@ -890,31 +958,62 @@
       };
 
       try {
-        const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
-        await addDoc(storesRef, newStore);
+        if (editStoreId) {
+            // Actualizamos el documento existente
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', editStoreId), storeData);
+            showToast("Sucursal actualizada exitosamente");
+        } else {
+            // Creamos uno nuevo
+            const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
+            await addDoc(storesRef, storeData);
+            showToast("Sucursal guardada exitosamente");
+        }
         closeAddModal();
-        showToast("Sucursal guardada exitosamente");
       } catch (error) {
-        showToast("Error al guardar en Firebase", true);
+        if (error.code === 'permission-denied') {
+            showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
+        } else {
+            showToast("Error al guardar en Firebase", true);
+        }
       }
     };
 
     window.deleteStore = async (id) => {
       if(confirm("¿Eliminar esta sucursal permanentemente?")) {
+        // Solución a sucursales locales que no borraban
+        if (id.startsWith('local-')) {
+           stores = stores.filter(s => s.id !== id);
+           renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable();
+           showToast("Sucursal local eliminada. (Usa 'Restaurar Base' para guardar de forma permanente)");
+           return;
+        }
+
         try {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id));
-          showToast("Sucursal eliminada");
-        } catch (error) { showToast("Error al eliminar", true); }
+          showToast("Sucursal eliminada permanentemente");
+        } catch (error) { 
+          if (error.code === 'permission-denied') {
+              showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
+          } else {
+              showToast("Error al eliminar", true);
+          }
+        }
       }
     };
 
     window.restoreBaseStores = async () => {
-      if(confirm("¿Agregar tiendas base por defecto?")) {
+      if(confirm("¿Agregar tiendas base a la nube? Esto permite editarlas y borrarlas permanentemente.")) {
         try {
           const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
           for (const store of initialStoresData) await addDoc(storesRef, store);
-          showToast("¡Tiendas base restauradas!");
-        } catch (error) { showToast("Error al restaurar", true); }
+          showToast("¡Tiendas base añadidas a la nube correctamente!");
+        } catch (error) { 
+          if (error.code === 'permission-denied') {
+              showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
+          } else {
+              showToast("Error al restaurar", true);
+          }
+        }
       }
     };
   </script>
