@@ -358,11 +358,20 @@
             <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Dirección Exacta</label>
             <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-medium focus:border-brand-blue transition-colors resize-none" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
           </div>
-          <div>
-            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Horario</label>
-            <div class="relative">
-              <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-              <input type="text" id="f-schedule" required value="Lunes a Sábado: 9:00-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Horario Principal</label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="f-schedule" required placeholder="Ej: Lun-Sab: 9:00-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opcional)</span></label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="f-schedule-2" placeholder="Ej: Dom: 9:00-3:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+              </div>
             </div>
           </div>
           <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 dark:border-gray-700 gap-4">
@@ -557,6 +566,9 @@
           const bgSolidClass = store.type === 'normal' ? 'bg-brand-blue' : store.type === 'liquidacion' ? 'bg-brand-yellow' : 'bg-brand-green';
           const bgHoverClass = store.type === 'normal' ? 'hover:bg-blue-50/50 dark:hover:bg-brand-blue/10' : store.type === 'liquidacion' ? 'hover:bg-yellow-50/50 dark:hover:bg-brand-yellow/10' : 'hover:bg-green-50/50 dark:hover:bg-brand-green/10';
 
+          // Separar los horarios detectando comas para apilarlos
+          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5"></i>${s.trim()}</span>`).join('');
+
           return `
           <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up ${bgHoverClass} hover:shadow-xl hover:-translate-y-1" style="animation-delay: ${index * 0.05}s">
             ${isNearest ? `<div class="absolute inset-0 border-2 border-brand-green rounded-[1.5rem] pointer-events-none z-20"></div><div class="absolute top-0 right-0 bg-brand-green text-white text-[10px] font-black px-3 py-1 rounded-bl-xl z-30">¡MÁS CERCANA!</div>` : ''}
@@ -585,9 +597,11 @@
                 </div>
               </div>
               
-              <div class="pt-4 mt-5 border-t border-gray-200/60 dark:border-gray-700/60 flex items-center justify-between">
-                <span class="text-xs font-bold text-gray-500 dark:text-gray-400"><i class="far fa-clock mr-1.5"></i>${store.schedule}</span>
-                <span class="bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold">${store.depto}</span>
+              <div class="pt-4 mt-5 border-t border-gray-200/60 dark:border-gray-700/60 flex items-start justify-between gap-2">
+                <div class="text-xs font-bold text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+                  ${scheduleHTML}
+                </div>
+                <span class="bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold shrink-0 mt-0.5">${store.depto}</span>
               </div>
             </div>
             <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10"></div>
@@ -605,6 +619,8 @@
         const bgLightClass = store.type === 'normal' ? 'bg-brand-blue/10' : store.type === 'liquidacion' ? 'bg-brand-yellow/10' : 'bg-brand-green/10';
         const label = store.type === 'normal' ? 'General' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
 
+        const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
+
         return `
           <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors">
             <td class="px-6 py-4">
@@ -617,7 +633,9 @@
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
               <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium">${store.address}</div>
-              <div class="text-[10px] text-gray-400 mt-1 font-bold"><i class="far fa-clock mr-1"></i>${store.schedule}</div>
+              <div class="text-[10px] text-gray-400 mt-1 font-bold">
+                ${scheduleAdminHTML}
+              </div>
             </td>
             <td class="px-6 py-4 text-right whitespace-nowrap">
               <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 dark:bg-blue-900/10 hover:bg-brand-blue p-2.5 rounded-xl transition-colors shadow-sm mr-2" title="Editar"><i class="fas fa-edit"></i></button>
@@ -881,7 +899,11 @@
       document.getElementById('f-name').value = store.name;
       document.getElementById('f-type').value = store.type;
       document.getElementById('f-address').value = store.address;
-      document.getElementById('f-schedule').value = store.schedule;
+      
+      // Separamos los horarios si viene más de uno separados por coma
+      const scheduleParts = store.schedule.split(/,\s*/);
+      document.getElementById('f-schedule').value = scheduleParts[0] || '';
+      document.getElementById('f-schedule-2').value = scheduleParts.slice(1).join(', ') || '';
       
       openAddModal(true);
       
@@ -949,12 +971,17 @@
       e.preventDefault();
       if (!adminSelectedLocation) return;
       
+      // Unimos el horario principal y el secundario con una coma, de existir.
+      const sched1 = document.getElementById('f-schedule').value.trim();
+      const sched2 = document.getElementById('f-schedule-2').value.trim();
+      const finalSchedule = sched2 ? `${sched1}, ${sched2}` : sched1;
+
       const storeData = {
         name: document.getElementById('f-name').value,
         type: document.getElementById('f-type').value,
         depto: document.getElementById('f-depto').value,
         address: document.getElementById('f-address').value,
-        schedule: document.getElementById('f-schedule').value,
+        schedule: finalSchedule,
         lat: adminSelectedLocation.lat,
         lon: adminSelectedLocation.lon
       };
