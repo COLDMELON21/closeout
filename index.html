@@ -473,7 +473,15 @@
       { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
     ];
 
-    let stores = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
+    // ----- NUEVA LÓGICA DE MEMORIA LOCAL (OFFLINE FIRST) -----
+    // Recupera las tiendas locales guardadas o inicializa por primera vez
+    let localStoresCache = JSON.parse(localStorage.getItem('closeout_local_stores'));
+    if (!localStoresCache) {
+      localStoresCache = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
+      localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
+    }
+    
+    let stores = [...localStoresCache]; // Combina datos locales con nube dinámicamente
     let activeCategory = 'all';
     let activeDepto = 'Todos';
     let nearestStore = null;
@@ -482,7 +490,6 @@
     
     // Identificador para saber si estamos editando
     let editStoreId = null;
-    let firebaseHasLoaded = false;
 
     window.showToast = function(msg, isError = false) {
       const container = document.getElementById('toast-container');
@@ -843,6 +850,7 @@
         document.getElementById('modal-title').innerHTML = 'Nueva Sucursal';
         document.getElementById('add-store-form').reset();
         adminSelectedLocation = null;
+        editStoreId = null;
         if (adminClickMarker) adminClickMarker.setMap(null);
         document.getElementById('btn-save-store').disabled = true;
         
@@ -863,18 +871,13 @@
       }
     };
 
+    // ----- AHORA PUEDES EDITAR CUALQUIER SUCURSAL, INCLUSO LAS LOCALES -----
     window.editStore = function(id) {
-      if (id.startsWith('local-')) {
-          showToast("Esta sucursal es local. Para editarla, primero usa 'Restaurar Base' para guardarla en la nube.", true);
-          return;
-      }
-
       const store = stores.find(s => s.id === id);
       if (!store) return;
       
       editStoreId = id;
       
-      // Llenamos el formulario con los datos de la sucursal existente
       document.getElementById('f-name').value = store.name;
       document.getElementById('f-type').value = store.type;
       document.getElementById('f-address').value = store.address;
@@ -885,7 +888,6 @@
       document.getElementById('f-depto').value = store.depto;
       document.getElementById('modal-title').innerHTML = 'Editar Sucursal';
       
-      // Colocamos el marcador en el mapa
       adminSelectedLocation = { lat: store.lat, lon: store.lon };
       if (adminClickMarker) adminClickMarker.setMap(null);
       if (adminMap && window.google) {
@@ -924,20 +926,20 @@
         const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
         
         onSnapshot(storesRef, (snapshot) => {
-          // Solución al Borrado Fantasma: 
-          // Si Firebase carga, manda Firebase. Incluso si está vacío, actualizamos para reflejar que la borraste.
+          // COMBINA las tiendas en la nube con las locales para que nunca desaparezcan las locales al cargar
           if (!snapshot.empty) {
-            firebaseHasLoaded = true;
-            stores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          } else if (firebaseHasLoaded) {
-            // Si borraron la última sucursal real de Firebase, dejamos la lista vacía
-            stores = [];
+            const fbStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            stores = [...localStoresCache, ...fbStores];
+          } else {
+            stores = [...localStoresCache];
           }
           
           renderFilters();
           renderStoresList();
           if (isAdminView) renderAdminTable();
-        }, (err) => console.error("Usando modo local puro."));
+        }, (err) => {
+            console.error("Firebase no disponible. Usando modo local puro.");
+        });
       } catch (error) { console.error("Auth error:", error); }
     };
     
@@ -957,43 +959,71 @@
         lon: adminSelectedLocation.lon
       };
 
+      // Si estamos editando una tienda "local" (Caché local)
+      if (editStoreId && editStoreId.startsWith('local-')) {
+          const index = localStoresCache.findIndex(s => s.id === editStoreId);
+          if (index !== -1) {
+              localStoresCache[index] = { ...localStoresCache[index], ...storeData };
+              localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
+              
+              const globalIndex = stores.findIndex(s => s.id === editStoreId);
+              if(globalIndex !== -1) stores[globalIndex] = { ...stores[globalIndex], ...storeData };
+          }
+          showToast("Sucursal actualizada correctamente.");
+          closeAddModal();
+          renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable();
+          return;
+      }
+
+      // Si es de Firebase
       try {
         if (editStoreId) {
-            // Actualizamos el documento existente
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', editStoreId), storeData);
-            showToast("Sucursal actualizada exitosamente");
+            showToast("Sucursal actualizada en la nube");
         } else {
-            // Creamos uno nuevo
             const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
             await addDoc(storesRef, storeData);
-            showToast("Sucursal guardada exitosamente");
+            showToast("Sucursal guardada en la nube exitosamente");
         }
         closeAddModal();
       } catch (error) {
-        if (error.code === 'permission-denied') {
-            showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
-        } else {
-            showToast("Error al guardar en Firebase", true);
+        console.warn("Fallo Firebase, guardando localmente.", error);
+        
+        // Backup: Si Firebase falla por permisos, lo guarda en la memoria temporal para que funcione
+        if (!editStoreId) {
+           const newLocalId = 'local-' + Date.now();
+           const newLocalStore = { id: newLocalId, ...storeData };
+           localStoresCache.push(newLocalStore);
+           localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
+           stores.push(newLocalStore);
+           showToast("Guardado localmente. (Sin conexión a base de datos)");
         }
+        closeAddModal();
+        renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable();
       }
     };
 
     window.deleteStore = async (id) => {
       if(confirm("¿Eliminar esta sucursal permanentemente?")) {
-        // Solución a sucursales locales que no borraban
+        
+        // Si la sucursal es "Local", la borramos de la caché de forma permanente
         if (id.startsWith('local-')) {
+           localStoresCache = localStoresCache.filter(s => s.id !== id);
+           localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
            stores = stores.filter(s => s.id !== id);
+           
            renderFilters(); renderStoresList(); if(isAdminView) renderAdminTable();
-           showToast("Sucursal local eliminada. (Usa 'Restaurar Base' para guardar de forma permanente)");
+           showToast("Sucursal eliminada.");
            return;
         }
 
+        // Si es de Firebase, la borramos de la nube
         try {
           await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id));
-          showToast("Sucursal eliminada permanentemente");
+          showToast("Sucursal eliminada de la nube");
         } catch (error) { 
           if (error.code === 'permission-denied') {
-              showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
+              showToast("Firebase Error: Ve a 'Authentication' y habilita 'Anónimo'", true);
           } else {
               showToast("Error al eliminar", true);
           }
@@ -1002,18 +1032,11 @@
     };
 
     window.restoreBaseStores = async () => {
-      if(confirm("¿Agregar tiendas base a la nube? Esto permite editarlas y borrarlas permanentemente.")) {
-        try {
-          const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
-          for (const store of initialStoresData) await addDoc(storesRef, store);
-          showToast("¡Tiendas base añadidas a la nube correctamente!");
-        } catch (error) { 
-          if (error.code === 'permission-denied') {
-              showToast("Firebase Error: Ve a 'Authentication' > 'Sign-in method' y habilita 'Anónimo'", true);
-          } else {
-              showToast("Error al restaurar", true);
-          }
-        }
+      if(confirm("¿Restaurar todas las tiendas a sus datos originales?")) {
+        // Borramos la memoria local guardada y recargamos la página para reiniciarlo
+        localStorage.removeItem('closeout_local_stores');
+        showToast("Restaurando tiendas originales...");
+        setTimeout(() => location.reload(), 800);
       }
     };
   </script>
