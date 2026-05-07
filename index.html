@@ -28,13 +28,14 @@
               blue: '#002D72', 
               red: '#E30613',  
               green: '#00A650',
-              yellow: '#F59E0B'
+              yellow: '#FCC71F',
+              pastel: '#FF9B6A'
             }
           },
           boxShadow: {
             'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
             'glow-blue': '0 0 20px rgba(0, 45, 114, 0.4)',
-            'glow-red': '0 0 20px rgba(227, 6, 19, 0.4)',
+            'glow-green': '0 0 20px rgba(0, 166, 80, 0.4)',
           }
         }
       }
@@ -72,13 +73,33 @@
     }
     .animate-float { animation: float 6s ease-in-out infinite; }
 
-    /* Patrón de fondo (Grid) */
+    /* Animación especial para resaltar la sucursal más cercana */
+    @keyframes highlightPulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 166, 80, 0.7); transform: translateY(-5px) scale(1.02); }
+      50% { box-shadow: 0 0 0 20px rgba(0, 166, 80, 0); transform: translateY(-5px) scale(1.02); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 166, 80, 0); transform: translateY(-5px) scale(1.02); }
+    }
+    .animate-highlight {
+      animation: highlightPulse 2s infinite;
+      z-index: 40;
+      position: relative;
+      border: 3px solid #00A650 !important;
+    }
+
+    /* Patrón de fondo general (Grid) */
     .bg-grid-pattern {
       background-image: radial-gradient(rgba(0, 45, 114, 0.08) 1px, transparent 1px);
       background-size: 24px 24px;
     }
     .dark .bg-grid-pattern {
       background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    }
+    
+    /* Textura lúdica exclusiva para tarjetas de Niños */
+    .bg-kids-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px), radial-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
     }
 
     /* Glassmorphism */
@@ -112,7 +133,7 @@
   <!-- Elementos decorativos de fondo (Blobs) -->
   <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none bg-grid-pattern">
     <div class="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 blur-[100px] animate-float"></div>
-    <div class="absolute top-[20%] right-[-5%] w-[30vw] h-[30vw] rounded-full bg-brand-red/5 dark:bg-brand-red/10 blur-[80px] animate-float" style="animation-delay: -2s;"></div>
+    <div class="absolute top-[20%] right-[-5%] w-[30vw] h-[30vw] rounded-full bg-brand-green/5 dark:bg-brand-green/10 blur-[80px] animate-float" style="animation-delay: -2s;"></div>
   </div>
 
   <!-- Toast Notification Container -->
@@ -141,10 +162,29 @@
        ========================================= -->
   <main id="client-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 animate-fade-in-up">
     
+    <!-- Encabezado de Bienvenida con Descripción -->
+    <div class="text-center mb-6 md:mb-8">
+      <h1 class="text-3xl md:text-5xl font-display font-black text-gray-900 dark:text-white mb-4 tracking-tight">Close Out Nicaragua</h1>
+      <p class="text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium max-w-2xl mx-auto px-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md py-3.5 rounded-full border border-gray-200/50 dark:border-gray-700/50 shadow-sm inline-block">
+        <i class="fas fa-shopping-bag mr-2 text-brand-blue"></i> Tienda de ropa y accesorios para toda la familia, pensando en la economía familiar.
+      </p>
+    </div>
+
+    <!-- Buscador General -->
+    <div class="max-w-3xl mx-auto mb-10 md:mb-14 relative group px-2">
+      <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
+        <i class="fas fa-search text-gray-400 group-focus-within:text-brand-blue transition-colors text-lg"></i>
+      </div>
+      <input type="text" id="search-input" class="w-full pl-14 pr-12 py-4 rounded-full border-2 border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-brand-blue dark:focus:border-brand-blue outline-none shadow-soft hover:shadow-lg focus:shadow-xl transition-all duration-300 text-base md:text-lg font-medium" placeholder="Buscar sucursal por nombre o ubicación...">
+      <button id="clear-search" class="absolute inset-y-0 right-0 pr-6 flex items-center hidden-view">
+         <i class="fas fa-times-circle text-gray-300 hover:text-brand-red transition-colors text-xl"></i>
+      </button>
+    </div>
+
     <!-- Categorías Rápidas -->
     <div class="mb-8 md:mb-12">
       <div class="flex items-center mb-5">
-        <div class="w-2 h-6 bg-brand-red rounded-full mr-3"></div>
+        <div class="w-2 h-6 bg-brand-blue rounded-full mr-3"></div>
         <h3 class="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight">Filtrar Colección</h3>
       </div>
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" id="category-buttons">
@@ -154,18 +194,18 @@
 
     <!-- Geolocalización Banner -->
     <div class="relative overflow-hidden rounded-[2rem] p-6 md:p-10 text-white mb-10 shadow-2xl flex flex-col md:flex-row items-center justify-between border border-white/10 group">
-      <div class="absolute inset-0 bg-gradient-to-br from-brand-blue via-[#001f52] to-[#00102e] dark:from-[#051126] dark:via-[#020814] dark:to-black -z-10"></div>
-      <div class="absolute top-0 right-0 w-64 h-64 bg-brand-red/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
+      <div class="absolute inset-0 bg-gradient-to-br from-brand-red via-red-800 to-red-950 dark:from-red-900 dark:via-red-950 dark:to-black -z-10"></div>
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700"></div>
       
       <div class="relative z-10 mb-6 md:mb-0 md:mr-8 text-center md:text-left w-full">
-        <span class="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold tracking-widest uppercase mb-3 text-blue-200">Ubicación Inteligente</span>
+        <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold tracking-widest uppercase mb-3 text-white">Ubicación Inteligente</span>
         <h2 class="text-3xl md:text-4xl font-display font-black mb-2 text-white">¿No sabes a dónde ir?</h2>
-        <p class="text-blue-100/80 dark:text-gray-400 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal más cercana a ti con un solo toque y ahorra tiempo.</p>
-        <p id="location-error" class="mt-3 flex items-center justify-center md:justify-start text-brand-red font-bold text-sm bg-red-500/10 py-2 px-4 rounded-lg backdrop-blur-sm hidden-view w-fit mx-auto md:mx-0">
-          <i class="fas fa-exclamation-triangle mr-2"></i> <span id="location-error-text"></span>
+        <p class="text-white/80 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal más cercana a ti con un solo toque y ahorra tiempo.</p>
+        <p id="location-error" class="mt-3 flex items-center justify-center md:justify-start text-white font-bold text-sm bg-black/20 py-2 px-4 rounded-lg backdrop-blur-sm hidden-view w-fit mx-auto md:mx-0">
+          <i class="fas fa-exclamation-triangle mr-2 text-brand-yellow"></i> <span id="location-error-text"></span>
         </p>
       </div>
-      <button id="btn-locate" class="relative z-10 w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-3 bg-white text-brand-blue px-8 py-4 rounded-full font-extrabold shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_40px_rgba(255,255,255,0.5)] hover:scale-105 transform transition-all duration-300 text-base md:text-lg">
+      <button id="btn-locate" class="relative z-10 w-full md:w-auto flex-shrink-0 inline-flex justify-center items-center space-x-3 bg-white text-brand-red px-8 py-4 rounded-full font-extrabold shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:shadow-[0_0_40px_rgba(255,255,255,0.5)] hover:scale-105 transform transition-all duration-300 text-base md:text-lg">
         <i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>
       </button>
     </div>
@@ -342,7 +382,7 @@
             <div>
               <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Categoría</label>
               <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 dark:text-white rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none">
-                <option value="normal">General</option>
+                <option value="normal">Full Price</option>
                 <option value="liquidacion">Liquidación</option>
                 <option value="ninos">Niños</option>
               </select>
@@ -474,16 +514,15 @@
 
     const departmentsList = ["Todos", "Managua", "León", "Chinandega", "Masaya", "Jinotepe", "Nagarote", "Granada", "Rivas", "Matagalpa"];
     
-    // Categorías modificadas con Imágenes Oficiales
+    // Filtros ajustados a los nuevos colores (Rojo para Full Price, Amarillo para Liquidación)
     const categories = [
       { id: 'all', name: 'Todas', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
-      { id: 'normal', name: 'General', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-blue/5 dark:bg-brand-blue/10', hoverBg: 'hover:bg-brand-blue/10 dark:hover:bg-brand-blue/20', activeRing: 'ring-brand-blue/50 dark:ring-blue-400/50' },
-      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/5 dark:bg-brand-yellow/10', hoverBg: 'hover:bg-yellow-50 dark:hover:bg-brand-yellow/20', activeRing: 'ring-brand-yellow/50' },
+      { id: 'normal', name: 'Full Price', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-red-50 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50 dark:ring-red-400/50' },
+      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/10 dark:bg-brand-yellow/20', hoverBg: 'hover:bg-yellow-50 dark:hover:bg-brand-yellow/30', activeRing: 'ring-brand-yellow/50' },
       { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
     ];
 
-    // ----- NUEVA LÓGICA DE MEMORIA LOCAL (OFFLINE FIRST) -----
-    // Recupera las tiendas locales guardadas o inicializa por primera vez
+    // ----- LÓGICA DE MEMORIA LOCAL Y ESTADOS -----
     let localStoresCache = JSON.parse(localStorage.getItem('closeout_local_stores'));
     if (!localStoresCache) {
       localStoresCache = initialStoresData.map((s, i) => ({ id: 'local-' + i, ...s }));
@@ -493,12 +532,32 @@
     let stores = [...localStoresCache]; // Combina datos locales con nube dinámicamente
     let activeCategory = 'all';
     let activeDepto = 'Todos';
+    let searchQuery = '';
     let nearestStore = null;
     let isAdminView = false;
     let clientMap = null, adminMap = null, clientMarkers = [], adminClickMarker = null, adminSelectedLocation = null;
-    
-    // Identificador para saber si estamos editando
     let editStoreId = null;
+
+    // --- LÓGICA DEL BUSCADOR ---
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      if (searchQuery.length > 0) {
+        clearSearchBtn.classList.remove('hidden-view');
+      } else {
+        clearSearchBtn.classList.add('hidden-view');
+      }
+      renderStoresList();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearSearchBtn.classList.add('hidden-view');
+      renderStoresList();
+    });
 
     window.showToast = function(msg, isError = false) {
       const container = document.getElementById('toast-container');
@@ -535,10 +594,16 @@
     }
 
     function renderStoresList() {
+      // Filtrar por Categoría, Departamento y el Buscador
       const filtered = stores.filter(store => 
         (activeCategory === 'all' || store.type === activeCategory) && 
-        (activeDepto === 'Todos' || store.depto === activeDepto)
+        (activeDepto === 'Todos' || store.depto === activeDepto) &&
+        (searchQuery === '' || store.name.toLowerCase().includes(searchQuery) || store.address.toLowerCase().includes(searchQuery))
       );
+
+      // Ordenar tarjetas: Full Price (Rojo) -> Liquidación (Amarillo) -> Niños (Verde)
+      const sortOrder = { 'normal': 1, 'liquidacion': 2, 'ninos': 3 };
+      filtered.sort((a, b) => (sortOrder[a.type] || 99) - (sortOrder[b.type] || 99));
 
       const gridCount = document.getElementById('grid-count');
       gridCount.innerText = `${filtered.length}`;
@@ -551,60 +616,72 @@
       if (filtered.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full bg-white dark:bg-gray-800 p-12 rounded-[2rem] text-center border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col items-center">
-            <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-store-slash text-gray-300 dark:text-gray-600 text-3xl"></i></div>
+            <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-search text-gray-300 dark:text-gray-600 text-3xl"></i></div>
             <h3 class="text-xl font-display font-black text-gray-900 dark:text-white mb-2">Sin resultados</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-xs">Aún no hay tiendas en esta selección.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium max-w-xs">No se encontraron tiendas para tu búsqueda o selección.</p>
           </div>`;
       } else {
         grid.innerHTML = filtered.map((store, index) => {
           const isNearest = nearestStore && nearestStore.id === store.id;
           const imgUrl = store.type === 'normal' ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : store.type === 'liquidacion' ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png';
-          const label = store.type === 'normal' ? 'General' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
           
-          const textColorClass = store.type === 'normal' ? 'text-brand-blue' : store.type === 'liquidacion' ? 'text-brand-yellow' : 'text-brand-green';
-          const bgLightClass = store.type === 'normal' ? 'bg-brand-blue/10' : store.type === 'liquidacion' ? 'bg-brand-yellow/10' : 'bg-brand-green/10';
-          const bgSolidClass = store.type === 'normal' ? 'bg-brand-blue' : store.type === 'liquidacion' ? 'bg-brand-yellow' : 'bg-brand-green';
-          const bgHoverClass = store.type === 'normal' ? 'hover:bg-blue-50/50 dark:hover:bg-brand-blue/10' : store.type === 'liquidacion' ? 'hover:bg-yellow-50/50 dark:hover:bg-brand-yellow/10' : 'hover:bg-green-50/50 dark:hover:bg-brand-green/10';
+          const isNormal = store.type === 'normal';
+          const isLiq = store.type === 'liquidacion';
+          const isNinos = store.type === 'ninos';
+          
+          const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+          
+          // Fondos dinámicos según el tipo de sucursal
+          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : 
+                              isLiq ? 'bg-brand-yellow dark:bg-[#FCC71F]' : 
+                              'bg-brand-green dark:bg-[#008A40]';
+          
+          // Se agrega la clase bg-kids-pattern si es de niños
+          const finalCardClass = `${cardBgClass} ${isNinos ? 'bg-kids-pattern' : ''}`;
+                              
+          const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
+          
+          // Borde inferior sutil
+          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-yellow-600' : 'bg-green-800';
 
-          // Separar los horarios detectando comas para apilarlos
-          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5"></i>${s.trim()}</span>`).join('');
+          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('');
 
           return `
-          <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up ${bgHoverClass} hover:shadow-xl hover:-translate-y-1" style="animation-delay: ${index * 0.05}s">
-            ${isNearest ? `<div class="absolute inset-0 border-2 border-brand-green rounded-[1.5rem] pointer-events-none z-20"></div><div class="absolute top-0 right-0 bg-brand-green text-white text-[10px] font-black px-3 py-1 rounded-bl-xl z-30">¡MÁS CERCANA!</div>` : ''}
+          <div class="${finalCardClass} rounded-[1.5rem] shadow-lg border border-white/10 transition-all duration-300 overflow-hidden group flex flex-col relative animate-fade-in-up hover:shadow-2xl hover:-translate-y-1 ${isNearest ? 'animate-highlight' : ''}" style="animation-delay: ${index * 0.05}s">
+            ${isNearest ? `<div class="absolute top-0 right-0 bg-brand-green text-white text-[12px] font-black px-4 py-1.5 rounded-bl-xl z-30 shadow-md flex items-center"><i class="fas fa-location-arrow mr-1 animate-bounce"></i> ¡MÁS CERCANA!</div>` : ''}
             
             <!-- MARCA DE AGUA DEL LOGO EN EL FONDO -->
-            <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.07] dark:opacity-[0.12] flex items-center justify-center p-2 md:p-4 transition-transform duration-500 group-hover:scale-110 group-hover:opacity-[0.1] dark:group-hover:opacity-[0.15]">
-              <img src="${imgUrl}" class="w-full h-full object-contain" alt="">
+            <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.1] dark:opacity-[0.15] flex items-center justify-center p-2 md:p-4 transition-transform duration-500 group-hover:scale-110">
+              <img src="${imgUrl}" class="w-full h-full object-contain filter brightness-0 invert" alt="">
             </div>
             
             <div class="p-6 md:p-7 flex flex-col flex-grow relative z-10">
               <div class="flex justify-between items-start mb-4 gap-4">
                 <div class="pr-0">
-                  <span class="inline-block px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-widest ${textColorClass} ${bgLightClass} mb-2 shadow-sm backdrop-blur-sm">${label}</span>
-                  <h4 class="text-xl md:text-2xl font-display font-black text-gray-900 dark:text-white leading-tight tracking-tight">${store.name}</h4>
+                  <span class="inline-block px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest ${tagTextColorClass} bg-white mb-2 shadow-sm">${label}</span>
+                  <h4 class="text-xl md:text-2xl font-display font-black text-white leading-tight tracking-tight">${store.name}</h4>
                 </div>
                 <!-- Mini Logo por Tarjeta DESTACADO -->
-                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex-shrink-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-all shadow-md group-hover:shadow-xl border border-gray-100 dark:border-gray-700 p-2 md:p-3">
-                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain drop-shadow-sm">
+                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex-shrink-0 bg-white shadow-md border border-white/20 p-2 md:p-3">
+                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain">
                 </div>
               </div>
               
               <div class="space-y-3 flex-grow mt-2">
-                <div class="flex items-start text-sm text-gray-600 dark:text-gray-300 font-medium">
-                  <i class="fas fa-map-pin mr-2 mt-1 text-gray-400 dark:text-gray-500 transition-colors"></i>
+                <div class="flex items-start text-sm text-white/95 font-medium">
+                  <i class="fas fa-map-pin mr-2 mt-1 text-white/80 transition-colors"></i>
                   <span class="line-clamp-2 leading-relaxed">${store.address}</span>
                 </div>
               </div>
               
-              <div class="pt-4 mt-5 border-t border-gray-200/60 dark:border-gray-700/60 flex items-start justify-between gap-2">
-                <div class="text-xs font-bold text-gray-500 dark:text-gray-400 flex flex-col gap-1">
+              <div class="pt-4 mt-5 border-t border-white/20 flex items-start justify-between gap-2">
+                <div class="text-xs font-bold text-white/90 flex flex-col gap-1">
                   ${scheduleHTML}
                 </div>
-                <span class="bg-gray-100/80 dark:bg-gray-700/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 px-3 py-1 rounded-lg text-xs font-bold shrink-0 mt-0.5">${store.depto}</span>
+                <span class="bg-black/20 text-white px-3 py-1 rounded-lg text-xs font-bold shrink-0 mt-0.5">${store.depto}</span>
               </div>
             </div>
-            <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10"></div>
+            <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10 brightness-110"></div>
           </div>`;
         }).join('');
       }
@@ -615,9 +692,12 @@
     function renderAdminTable() {
       const tbody = document.getElementById('admin-table-body');
       tbody.innerHTML = stores.map(store => {
-        const textColorClass = store.type === 'normal' ? 'text-brand-blue' : store.type === 'liquidacion' ? 'text-brand-yellow' : 'text-brand-green';
-        const bgLightClass = store.type === 'normal' ? 'bg-brand-blue/10' : store.type === 'liquidacion' ? 'bg-brand-yellow/10' : 'bg-brand-green/10';
-        const label = store.type === 'normal' ? 'General' : store.type === 'liquidacion' ? 'Liquidación' : 'Niños';
+        const isNormal = store.type === 'normal';
+        const isLiq = store.type === 'liquidacion';
+        
+        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
+        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-brand-yellow/20' : 'bg-brand-green/10';
+        const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
 
         const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
 
