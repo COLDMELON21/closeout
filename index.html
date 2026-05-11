@@ -136,6 +136,11 @@
 </head>
 <body class="bg-[#F8FAFC] dark:bg-[#0B1121] font-sans text-gray-800 dark:text-gray-200 min-h-screen overflow-x-hidden transition-colors duration-500 relative">
 
+  <!-- BANNER DE PROMOCIONES -->
+  <div id="promo-banner" class="bg-brand-red text-white font-display font-bold text-center py-2.5 px-4 shadow-md hidden-view relative z-50 text-sm md:text-base animate-fade-in-up">
+    <!-- El texto se inyecta por JS -->
+  </div>
+
   <!-- Elementos de soporte -->
   <div id="logo-bg" class="hidden"></div>
   <span id="logo-text" class="hidden"></span>
@@ -150,16 +155,14 @@
   <!-- HEADER -->
   <header class="glass shadow-sm sticky top-0 z-40 transition-colors duration-500">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4 flex items-center justify-between">
-      <div class="flex items-center cursor-pointer group" onclick="toggleAdminView(false)">
+      <!-- Clic en el logo para ir al panel Admin -->
+      <div class="flex items-center cursor-pointer group relative" onclick="toggleAdminView()">
         <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain transition-transform duration-500 hover:rotate-2 hover:scale-110 drop-shadow-md">
       </div>
       <div class="flex items-center space-x-3">
         <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 hover:text-brand-blue dark:hover:text-blue-400 hover:rotate-12 hover:scale-110 transition-all duration-300">
           <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm"></i>
           <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm"></i>
-        </button>
-        <button id="btn-admin-toggle" class="flex items-center space-x-2 text-xs md:text-sm font-bold px-4 py-2.5 rounded-full transition-all duration-300 bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 hover:text-brand-blue hover:shadow-md transform hover:-translate-y-0.5">
-          <i class="fas fa-sliders-h"></i> <span class="hidden sm:inline" id="btn-admin-text">Panel Admin</span>
         </button>
       </div>
     </div>
@@ -207,7 +210,7 @@
       <div class="relative z-10 mb-6 md:mb-0 md:mr-8 text-center md:text-left w-full">
         <span class="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold tracking-widest uppercase mb-3 text-white shadow-sm">Ubicación Inteligente</span>
         <h2 class="text-3xl md:text-4xl font-display font-black mb-2 text-white">¿No sabes a dónde ir?</h2>
-        <p class="text-white/80 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal más cercana a ti con un solo toque.</p>
+        <p class="text-white/80 text-sm md:text-base max-w-md mx-auto md:mx-0 font-medium">Encuentra la sucursal operativa más cercana a ti.</p>
         <p id="location-error" class="mt-3 flex items-center justify-center md:justify-start text-white font-bold text-sm bg-black/30 py-2 px-4 rounded-lg backdrop-blur-sm hidden-view w-fit mx-auto md:mx-0 animate-pulse">
           <i class="fas fa-exclamation-triangle mr-2 text-brand-yellow"></i> <span id="location-error-text"></span>
         </p>
@@ -289,6 +292,23 @@
        VISTA ADMINISTRADOR
        ========================================= -->
   <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up hidden-view">
+    
+    <!-- Editor de Banner -->
+    <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50 mb-8">
+      <div class="flex items-center mb-3">
+        <i class="fas fa-bullhorn text-brand-red text-xl mr-3"></i>
+        <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Banner de Promociones (Aviso Superior)</h3>
+      </div>
+      <p class="text-sm text-gray-500 mb-4 font-medium">Este mensaje aparecerá en la parte más alta de la página web. Déjalo en blanco si quieres ocultarlo.</p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 ¡Descuentos de Fin de Semana en toda la tienda! 🔥" class="flex-grow px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl outline-none text-sm focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white">
+        <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center justify-center shadow-md text-sm whitespace-nowrap">
+          <i class="fas fa-save mr-2"></i> Guardar Banner
+        </button>
+      </div>
+    </div>
+
+    <!-- Panel de Control Principal -->
     <div class="glass rounded-3xl p-6 md:p-8 shadow-soft border border-gray-200/50 dark:border-gray-700/50 mb-8">
       <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div class="flex items-center">
@@ -387,7 +407,7 @@
             <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Nombre de Tienda</label>
             <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl focus:border-brand-blue outline-none text-sm font-bold transition-colors" placeholder="Ej: Close Out Linda Vista" />
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
               <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none cursor-pointer hover:bg-gray-100">
@@ -400,6 +420,13 @@
               <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Departamento</label>
               <select id="f-depto" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none cursor-pointer hover:bg-gray-100">
                 <!-- Se llena por JS -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2 text-brand-red">ESTADO</label>
+              <select id="f-status" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-red transition-colors appearance-none cursor-pointer hover:bg-gray-100 text-gray-900">
+                <option value="open">Operativa</option>
+                <option value="closed_temp">En Remodelación</option>
               </select>
             </div>
           </div>
@@ -448,7 +475,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- MODO OSCURO LÓGICA ---
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -523,6 +550,7 @@
     localStorage.setItem('closeout_local_stores', JSON.stringify(localStoresCache));
     
     let stores = [...localStoresCache];
+    let bannerText = localStorage.getItem('closeout_banner') || '';
     let activeCategory = 'all';
     let activeDepto = 'Todos';
     let searchQuery = '';
@@ -612,11 +640,44 @@
       }
       if (!hasRecognizableSchedule) return ''; 
       if (isOpen) {
-          return `<span class="bg-green-500/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Abierto</span>`;
+          return `<span class="bg-brand-green/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Abierto</span>`;
       } else {
-          return `<span class="bg-red-500/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white"></span> Cerrado</span>`;
+          return `<span class="bg-brand-red/90 text-white text-[10px] px-2.5 py-1 rounded-md font-bold shadow-sm inline-flex items-center gap-1.5 backdrop-blur-sm shrink-0 leading-none"><span class="w-1.5 h-1.5 rounded-full bg-white"></span> Cerrado</span>`;
       }
     }
+
+    function updateBannerUI() {
+      const bannerEl = document.getElementById('promo-banner');
+      const adminInput = document.getElementById('admin-banner-input');
+      
+      if (bannerEl) {
+        if (bannerText && bannerText.trim().length > 0) {
+          bannerEl.innerHTML = `<i class="fas fa-star mr-2 text-brand-yellow animate-pulse"></i> ${bannerText} <i class="fas fa-star ml-2 text-brand-yellow animate-pulse"></i>`;
+          bannerEl.classList.remove('hidden-view');
+        } else {
+          bannerEl.classList.add('hidden-view');
+        }
+      }
+      if (adminInput) adminInput.value = bannerText;
+    }
+
+    window.saveBanner = async () => {
+      const newVal = document.getElementById('admin-banner-input').value;
+      try {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner'), { text: newVal });
+        showToast("Banner actualizado con éxito.");
+      } catch (e) {
+        try {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner'), { text: newVal });
+          showToast("Banner creado y actualizado.");
+        } catch (err) {
+          bannerText = newVal;
+          localStorage.setItem('closeout_banner', newVal);
+          updateBannerUI();
+          showToast("Banner actualizado (Modo local).");
+        }
+      }
+    };
 
     function renderFilters() {
       const catContainer = document.getElementById('category-buttons');
@@ -642,22 +703,23 @@
         (searchQuery === '' || store.name.toLowerCase().includes(searchQuery) || store.address.toLowerCase().includes(searchQuery))
       );
 
+      let gridStores = filtered;
+      if (nearestStore) {
+        gridStores = filtered.filter(store => store.id !== nearestStore.id);
+      }
+
       const sortOrder = { 'normal': 1, 'liquidacion': 2, 'ninos': 3 };
-      filtered.sort((a, b) => {
-        if (nearestStore) {
-          if (a.id === nearestStore.id) return -1;
-          if (b.id === nearestStore.id) return 1;
-        }
+      gridStores.sort((a, b) => {
         return (sortOrder[a.type] || 99) - (sortOrder[b.type] || 99);
       });
 
       const gridCount = document.getElementById('grid-count');
-      gridCount.innerText = `${filtered.length}`;
+      gridCount.innerText = `${gridStores.length}`;
       gridCount.classList.remove('animate-pulse'); void gridCount.offsetWidth; gridCount.classList.add('animate-pulse');
 
       const grid = document.getElementById('stores-grid');
 
-      if (filtered.length === 0) {
+      if (gridStores.length === 0) {
         grid.innerHTML = `
           <div class="col-span-full bg-white dark:bg-gray-800 p-12 rounded-[2rem] text-center border border-gray-100 shadow-sm flex flex-col items-center animate-fade-in-up">
             <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4"><i class="fas fa-search text-gray-300 text-3xl animate-pulse"></i></div>
@@ -665,22 +727,35 @@
             <p class="text-sm text-gray-500 font-medium max-w-xs">No se encontraron tiendas para tu búsqueda.</p>
           </div>`;
       } else {
-        grid.innerHTML = filtered.map((store, index) => {
-          const isNearest = nearestStore && nearestStore.id === store.id;
+        grid.innerHTML = gridStores.map((store, index) => {
           const imgUrl = store.type === 'normal' ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : store.type === 'liquidacion' ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png';
           const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
           const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+          
+          const isClosedTemp = store.status === 'closed_temp';
           
           const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-brand-yellow dark:bg-[#FCC71F]' : 'bg-brand-green dark:bg-[#008A40]';
           const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
           const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-yellow-600' : 'bg-green-800';
 
           const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('');
-          const statusHtml = getOpenStatusHtml(store.schedule);
+          
+          const statusHtml = isClosedTemp 
+             ? `<span class="bg-gray-800 text-brand-yellow text-[10px] px-2.5 py-1 rounded-md font-black shadow-sm inline-flex items-center gap-1.5 shrink-0 leading-none uppercase tracking-wider border border-brand-yellow/30"><i class="fas fa-hard-hat"></i> En Remodelación</span>` 
+             : getOpenStatusHtml(store.schedule);
+
+          // Estilo si está cerrado temporalmente (Grises y Opacidad)
+          const opacityClass = isClosedTemp ? 'opacity-80 grayscale-[0.4]' : '';
+          const pointerClass = isClosedTemp ? 'pointer-events-none' : '';
+
+          const buttonHtml = isClosedTemp
+             ? `<button disabled class="w-full bg-gray-800 text-gray-400 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-md flex items-center justify-center mt-1 cursor-not-allowed border border-gray-700">Cerrado Temporalmente</button>`
+             : `<a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" class="w-full bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 mt-1 group-hover:shadow-lg">
+                  <i class="fas fa-location-arrow mr-2 text-brand-blue group-hover:animate-bounce"></i> Llévame ahí
+                </a>`;
 
           return `
-          <div class="${cardBgClass} rounded-[1.5rem] shadow-lg border border-white/10 transition-all duration-500 overflow-hidden group flex flex-col relative animate-fade-in-up hover:shadow-float hover:-translate-y-2 ${isNearest ? 'animate-highlight' : ''}" style="animation-delay: ${index * 0.05}s">
-            ${isNearest ? `<div class="absolute top-0 right-0 bg-brand-green text-white text-[12px] font-black px-4 py-1.5 rounded-bl-xl z-30 shadow-md flex items-center"><i class="fas fa-location-arrow mr-1 animate-bounce"></i> ¡MÁS CERCANA!</div>` : ''}
+          <div class="${cardBgClass} ${opacityClass} rounded-[1.5rem] shadow-lg border border-white/10 transition-all duration-500 overflow-hidden group flex flex-col relative animate-fade-in-up hover:shadow-float hover:-translate-y-2" style="animation-delay: ${index * 0.05}s">
             
             <div class="p-6 md:p-7 flex flex-col flex-grow relative z-10">
               
@@ -690,29 +765,27 @@
                    ${statusHtml}
                 </div>
                 <div class="w-[88px] h-[36px] md:w-[104px] md:h-[40px] rounded-lg flex-shrink-0 bg-white shadow-md border border-white/40 p-1.5 flex items-center justify-center transform transition-transform duration-500 group-hover:rotate-2 group-hover:scale-105">
-                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain">
+                  <img src="${imgUrl}" alt="${label}" class="w-full h-full object-contain ${isClosedTemp ? 'grayscale opacity-60' : ''}">
                 </div>
               </div>
               
-              <h4 class="text-[22px] md:text-[26px] font-display font-black text-white leading-tight tracking-tight mb-1 transition-colors">${store.name}</h4>
+              <h4 class="text-[22px] md:text-[26px] font-display font-black text-white leading-tight tracking-tight mb-1 transition-colors ${isClosedTemp ? 'text-gray-300 line-through decoration-brand-yellow decoration-2' : ''}">${store.name}</h4>
               
               <div class="space-y-3 flex-grow mt-2">
                 <div class="flex items-start text-sm text-white/95 font-medium">
-                  <i class="fas fa-map-pin mr-2 mt-1 text-white/80 group-hover:text-white transition-colors animate-pulse"></i>
+                  <i class="fas fa-map-pin mr-2 mt-1 text-white/80 group-hover:text-white transition-colors ${!isClosedTemp && 'animate-pulse'}"></i>
                   <span class="line-clamp-2 leading-relaxed">${store.address}</span>
                 </div>
               </div>
               
               <div class="pt-4 mt-5 border-t border-white/20 flex flex-col gap-3">
                 <div class="flex items-start justify-between gap-2">
-                  <div class="text-xs font-bold text-white/90 flex flex-col gap-1">
+                  <div class="text-xs font-bold text-white/90 flex flex-col gap-1 ${isClosedTemp ? 'opacity-50' : ''}">
                     ${scheduleHTML}
                   </div>
                   <span class="bg-black/20 text-white px-3 py-1 rounded-lg text-xs font-bold shrink-0 mt-0.5">${store.depto}</span>
                 </div>
-                <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" class="w-full bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 mt-1 group-hover:shadow-lg">
-                  <i class="fas fa-location-arrow mr-2 text-brand-blue group-hover:animate-bounce"></i> Llévame ahí
-                </a>
+                ${buttonHtml}
               </div>
             </div>
             <div class="h-1.5 w-full ${bgSolidClass} mt-auto relative z-10 brightness-110"></div>
@@ -721,7 +794,7 @@
       }
 
       renderClientMarkers(filtered);
-      initReveal(); // Reinicializar reveal tags
+      initReveal(); 
     }
 
     function renderAdminTable() {
@@ -742,19 +815,23 @@
         const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-brand-yellow/20' : 'bg-brand-green/10';
         const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
         const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
+        const statusBadge = store.status === 'closed_temp' 
+            ? `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-brand-yellow uppercase"><i class="fas fa-hard-hat mr-1"></i> En Remodelación</span>` 
+            : `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-green/10 text-brand-green uppercase"><i class="fas fa-check-circle mr-1"></i> Activa</span>`;
 
         return `
-          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up">
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up ${store.status === 'closed_temp' ? 'bg-gray-50/50 opacity-80' : ''}">
             <td class="px-6 py-4">
-              <div class="font-display font-bold text-gray-900 dark:text-white">${store.name}</div>
+              <div class="font-display font-bold text-gray-900 dark:text-white ${store.status === 'closed_temp' ? 'text-gray-500 line-through' : ''}">${store.name}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
             </td>
             <td class="px-6 py-4">
               <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest ${bgLightClass} ${textColorClass}">${label}</span>
-              <div class="text-xs text-gray-500 dark:text-gray-400 mt-2 font-bold"><i class="fas fa-map-marker-alt mr-1 text-gray-300"></i>${store.depto}</div>
+              <br>
+              ${statusBadge}
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
-              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium">${store.address}</div>
+              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium"><i class="fas fa-map-marker-alt mr-1 text-gray-300"></i>${store.depto} - ${store.address}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-bold">${scheduleAdminHTML}</div>
             </td>
             <td class="px-6 py-4 text-right whitespace-nowrap">
@@ -805,12 +882,22 @@
       const bounds = new google.maps.LatLngBounds();
       filtered.forEach(store => {
         const isNearest = nearestStore && nearestStore.id === store.id;
+        const isClosedTemp = store.status === 'closed_temp';
+        
+        // Si está en remodelación, el pin es amarillo y no salta.
+        let pinIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+        if (isNearest) pinIcon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+        else if (isClosedTemp) pinIcon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+
         const marker = new google.maps.Marker({
           position: { lat: store.lat, lng: store.lon }, map: clientMap, title: store.name,
-          icon: isNearest ? 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+          icon: pinIcon,
           animation: isNearest ? google.maps.Animation.BOUNCE : google.maps.Animation.DROP
         });
-        const infoWindow = new google.maps.InfoWindow({ content: `<div style="padding: 5px; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 240px;"><h3 style="font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #002D72; font-family: 'Outfit', sans-serif;">${store.name}</h3><p style="font-size: 13px; margin: 0; line-height: 1.4; color: #4b5563;">${store.address}</p></div>` });
+        
+        const statusText = isClosedTemp ? `<p style="color: #FCC71F; font-weight: bold; font-size: 11px; margin-top: 4px;">⚠️ En Remodelación</p>` : '';
+        const infoWindow = new google.maps.InfoWindow({ content: `<div style="padding: 5px; font-family: 'Plus Jakarta Sans', sans-serif; max-width: 240px;"><h3 style="font-weight: 800; font-size: 15px; margin-bottom: 4px; color: #002D72; font-family: 'Outfit', sans-serif;">${store.name}</h3><p style="font-size: 13px; margin: 0; line-height: 1.4; color: #4b5563;">${store.address}</p>${statusText}</div>` });
+        
         marker.addListener('click', () => infoWindow.open(clientMap, marker));
         clientMarkers.push(marker); bounds.extend({ lat: store.lat, lng: store.lon });
       });
@@ -829,45 +916,59 @@
 
     window.setCategory = function(catId) {
       activeCategory = catId; nearestStore = null; document.getElementById('nearest-store-container').classList.add('hidden-view');
+      document.getElementById('btn-locate').innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
       renderFilters(); renderStoresList(); document.getElementById('client-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
 
     window.setDepto = function(dep) {
       activeDepto = dep; nearestStore = null; document.getElementById('nearest-store-container').classList.add('hidden-view');
+      document.getElementById('btn-locate').innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
       renderFilters(); renderStoresList();
     };
 
     document.getElementById('btn-locate').onclick = () => {
-      const btnText = document.getElementById('btn-locate-text'); const errCont = document.getElementById('location-error');
-      btnText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Calculando...';
+      const btn = document.getElementById('btn-locate'); const errCont = document.getElementById('location-error');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin text-brand-red"></i> <span id="btn-locate-text">Calculando...</span>';
       errCont.classList.add('hidden-view'); nearestStore = null;
 
       if (!navigator.geolocation) {
-        document.getElementById('location-error-text').innerText = 'Geolocalización no soportada.'; errCont.classList.remove('hidden-view'); btnText.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> Encuéntrame'; return;
+        document.getElementById('location-error-text').innerText = 'Geolocalización no soportada.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>'; return;
       }
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const userLat = position.coords.latitude; const userLon = position.coords.longitude;
           let minDistance = Infinity; let closest = null;
-          stores.forEach(s => { const distance = calculateDistance(userLat, userLon, s.lat, s.lon); if (distance < minDistance) { minDistance = distance; closest = { ...s, distance: distance.toFixed(1) }; } });
+          
+          // Filtrar por categoría, pero EXCLUYENDO las sucursales que están en remodelación
+          const storesToSearch = stores.filter(s => (activeCategory === 'all' || s.type === activeCategory) && s.status !== 'closed_temp');
+          
+          if (storesToSearch.length === 0) {
+             document.getElementById('location-error-text').innerText = 'No hay tiendas operativas en esta categoría.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>'; return;
+          }
+
+          storesToSearch.forEach(s => { const distance = calculateDistance(userLat, userLon, s.lat, s.lon); if (distance < minDistance) { minDistance = distance; closest = { ...s, distance: distance.toFixed(1) }; } });
+          
           if(closest) {
             nearestStore = closest; activeDepto = closest.depto;
             document.getElementById('nearest-name').innerText = closest.name; document.getElementById('nearest-address-text').innerText = closest.address; document.getElementById('nearest-distance').innerText = closest.distance;
             document.getElementById('nearest-store-container').classList.remove('hidden-view');
             renderFilters(); renderStoresList(); document.getElementById('nearest-store-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            btn.innerHTML = '<i class="fas fa-sync-alt text-brand-red"></i> <span id="btn-locate-text">Actualizar ubicación</span>';
+          } else {
+            btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
           }
-          btnText.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> Encuéntrame';
         },
         () => {
-          document.getElementById('location-error-text').innerText = 'Revisa permisos de ubicación.'; errCont.classList.remove('hidden-view'); btnText.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> Encuéntrame';
+          document.getElementById('location-error-text').innerText = 'Revisa permisos de ubicación.'; errCont.classList.remove('hidden-view'); btn.innerHTML = '<i class="fas fa-location-arrow text-brand-red"></i> <span id="btn-locate-text">Encuéntrame</span>';
         }
       );
     };
 
     window.toggleAdminView = function(forceClient = false) {
       if (forceClient || isAdminView) {
-        isAdminView = false; document.getElementById('client-view').classList.remove('hidden-view'); document.getElementById('admin-view').classList.add('hidden-view'); document.getElementById('btn-admin-text').innerText = 'Panel Admin';
+        isAdminView = false; document.getElementById('client-view').classList.remove('hidden-view'); document.getElementById('admin-view').classList.add('hidden-view');
         if(clientMap) google.maps.event.trigger(clientMap, "resize"); initReveal();
       } else {
         document.getElementById('password-modal').classList.remove('hidden-view'); document.getElementById('admin-password').focus();
@@ -879,7 +980,7 @@
     document.getElementById('password-form').onsubmit = (e) => {
       e.preventDefault(); const val = document.getElementById('admin-password').value;
       if (val === ADMIN_PASSWORD) {
-        closePasswordModal(); isAdminView = true; document.getElementById('client-view').classList.add('hidden-view'); document.getElementById('admin-view').classList.remove('hidden-view'); document.getElementById('btn-admin-text').innerText = 'Salir de Admin'; renderAdminTable();
+        closePasswordModal(); isAdminView = true; document.getElementById('client-view').classList.add('hidden-view'); document.getElementById('admin-view').classList.remove('hidden-view'); renderAdminTable();
       } else { document.getElementById('password-error').classList.remove('hidden-view'); }
     };
 
@@ -887,6 +988,7 @@
       const select = document.getElementById('f-depto'); select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
       if (!isEdit) {
         document.getElementById('modal-title').innerHTML = 'Nueva Sucursal'; document.getElementById('add-store-form').reset(); adminSelectedLocation = null; editStoreId = null;
+        document.getElementById('f-status').value = 'open';
         if (adminClickMarker) adminClickMarker.setMap(null); document.getElementById('btn-save-store').disabled = true;
         document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 flex items-center bg-gray-50 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
       }
@@ -898,6 +1000,8 @@
       const store = stores.find(s => s.id === id); if (!store) return;
       editStoreId = id; document.getElementById('f-name').value = store.name; document.getElementById('f-type').value = store.type; document.getElementById('f-address').value = store.address;
       const scheduleParts = store.schedule.split(/,\s*/); document.getElementById('f-schedule').value = scheduleParts[0] || ''; document.getElementById('f-schedule-2').value = scheduleParts.slice(1).join(', ') || '';
+      document.getElementById('f-status').value = store.status || 'open';
+      
       openAddModal(true); document.getElementById('f-depto').value = store.depto; document.getElementById('modal-title').innerHTML = 'Editar Sucursal';
       adminSelectedLocation = { lat: store.lat, lon: store.lon }; if (adminClickMarker) adminClickMarker.setMap(null);
       if (adminMap && window.google) { adminClickMarker = new google.maps.Marker({ position: { lat: store.lat, lng: store.lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', animation: google.maps.Animation.DROP }); }
@@ -913,11 +1017,24 @@
     const initFirebaseData = async () => {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } else { await signInAnonymously(auth); }
+        
+        // Cargar Tiendas
         const storesRef = collection(db, 'artifacts', appId, 'public', 'data', 'stores');
         onSnapshot(storesRef, (snapshot) => {
           if (!snapshot.empty) { const fbStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); stores = [...localStoresCache, ...fbStores]; } else { stores = [...localStoresCache]; }
           renderFilters(); renderStoresList(); if (isAdminView) renderAdminTable();
         }, (err) => { console.error("Firebase no disponible. Usando modo local puro."); });
+
+        // Cargar Banner
+        const bannerRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'banner');
+        onSnapshot(bannerRef, (docSnap) => {
+          if (docSnap.exists()) {
+             bannerText = docSnap.data().text || '';
+             localStorage.setItem('closeout_banner', bannerText);
+          }
+          updateBannerUI();
+        });
+
       } catch (error) { console.error("Auth error:", error); }
     };
     initFirebaseData();
@@ -925,7 +1042,16 @@
     document.getElementById('add-store-form').onsubmit = async (e) => {
       e.preventDefault(); if (!adminSelectedLocation) return;
       const sched1 = document.getElementById('f-schedule').value.trim(); const sched2 = document.getElementById('f-schedule-2').value.trim(); const finalSchedule = sched2 ? `${sched1}, ${sched2}` : sched1;
-      const storeData = { name: document.getElementById('f-name').value, type: document.getElementById('f-type').value, depto: document.getElementById('f-depto').value, address: document.getElementById('f-address').value, schedule: finalSchedule, lat: adminSelectedLocation.lat, lon: adminSelectedLocation.lon };
+      const storeData = { 
+          name: document.getElementById('f-name').value, 
+          type: document.getElementById('f-type').value, 
+          depto: document.getElementById('f-depto').value, 
+          status: document.getElementById('f-status').value,
+          address: document.getElementById('f-address').value, 
+          schedule: finalSchedule, 
+          lat: adminSelectedLocation.lat, 
+          lon: adminSelectedLocation.lon 
+      };
 
       if (editStoreId && editStoreId.startsWith('local-')) {
           const index = localStoresCache.findIndex(s => s.id === editStoreId);
