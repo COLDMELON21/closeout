@@ -286,6 +286,37 @@
         </div>
       </div>
     </div>
+    
+    <!-- Footer / Redes Sociales -->
+    <div class="mt-16 md:mt-24 pt-8 md:pt-12 border-t border-gray-200/60 dark:border-gray-800/60 text-center reveal">
+      <div class="inline-flex items-center justify-center space-x-2 bg-brand-blue/5 dark:bg-brand-blue/10 px-4 py-2 rounded-full mb-6">
+        <i class="fas fa-heart text-brand-red animate-pulse"></i>
+        <span class="text-sm font-bold text-brand-blue dark:text-blue-400 uppercase tracking-widest">Conecta con nosotros</span>
+      </div>
+      <h3 class="font-display font-black text-2xl md:text-4xl text-gray-900 dark:text-white mb-8">¡Síguenos en nuestras redes!</h3>
+      
+      <div class="flex justify-center gap-4 md:gap-8">
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/share/1BNEEkVvDX/" target="_blank" rel="noopener noreferrer" class="group relative w-14 h-14 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] bg-white dark:bg-gray-800 flex items-center justify-center text-blue-600 shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-500 overflow-hidden">
+          <div class="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-facebook-f text-2xl md:text-3xl relative z-10 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/closeoutnicaragua?igsh=MWp5MHVmMzM3a3R6cg==" target="_blank" rel="noopener noreferrer" class="group relative w-14 h-14 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] bg-white dark:bg-gray-800 flex items-center justify-center text-pink-600 shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-pink-500 overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-instagram text-2xl md:text-3xl relative z-10 group-hover:text-white transition-colors duration-300"></i>
+        </a>
+        
+        <!-- TikTok -->
+        <a href="https://www.tiktok.com/@close.out.nicarag?_r=1&_t=ZS-96H7VuYCrXs" target="_blank" rel="noopener noreferrer" class="group relative w-14 h-14 md:w-16 md:h-16 rounded-2xl md:rounded-[1.5rem] bg-white dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-gray-900 dark:hover:border-white overflow-hidden">
+          <div class="absolute inset-0 bg-black dark:bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+          <i class="fab fa-tiktok text-2xl md:text-3xl relative z-10 group-hover:text-white dark:group-hover:text-black transition-colors duration-300"></i>
+        </a>
+      </div>
+      <p class="mt-10 text-xs md:text-sm text-gray-400 dark:text-gray-500 font-medium">© 2026 Close Out Nicaragua. Todos los derechos reservados.</p>
+    </div>
+
   </main>
 
   <!-- =========================================
@@ -434,7 +465,9 @@
             <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Dirección Exacta</label>
             <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:border-brand-blue transition-colors resize-none" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Se actualizó la grilla de horarios a 3 columnas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Horario Principal</label>
               <div class="relative">
@@ -443,13 +476,21 @@
               </div>
             </div>
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opcional)</span></label>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opc)</span></label>
               <div class="relative">
                 <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input type="text" id="f-schedule-2" placeholder="Ej: Dom: 9:00-3:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
               </div>
             </div>
+            <div>
+              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Tercero <span class="normal-case font-medium">(Opc)</span></label>
+              <div class="relative">
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="f-schedule-3" placeholder="Ej: Feriados: Cerrado" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+              </div>
+            </div>
           </div>
+
           <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 gap-4">
             <div id="modal-map-status" class="text-sm font-bold text-gray-400 flex items-center bg-gray-50 py-2 px-4 rounded-lg transition-colors">
               <i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉
@@ -734,7 +775,7 @@
           
           const isClosedTemp = store.status === 'closed_temp';
           
-          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-brand-yellow dark:bg-[#FCC71F]' : 'bg-brand-green dark:bg-[#008A40]';
+          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-brand-yellow dark:bg-[#B45309]' : 'bg-brand-green dark:bg-[#008A40]';
           const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
           const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-yellow-600' : 'bg-green-800';
 
@@ -999,7 +1040,12 @@
     window.editStore = function(id) {
       const store = stores.find(s => s.id === id); if (!store) return;
       editStoreId = id; document.getElementById('f-name').value = store.name; document.getElementById('f-type').value = store.type; document.getElementById('f-address').value = store.address;
-      const scheduleParts = store.schedule.split(/,\s*/); document.getElementById('f-schedule').value = scheduleParts[0] || ''; document.getElementById('f-schedule-2').value = scheduleParts.slice(1).join(', ') || '';
+      
+      const scheduleParts = store.schedule.split(/,\s*/); 
+      document.getElementById('f-schedule').value = scheduleParts[0] || ''; 
+      document.getElementById('f-schedule-2').value = scheduleParts[1] || '';
+      document.getElementById('f-schedule-3').value = scheduleParts.slice(2).join(', ') || '';
+
       document.getElementById('f-status').value = store.status || 'open';
       
       openAddModal(true); document.getElementById('f-depto').value = store.depto; document.getElementById('modal-title').innerHTML = 'Editar Sucursal';
@@ -1041,7 +1087,15 @@
 
     document.getElementById('add-store-form').onsubmit = async (e) => {
       e.preventDefault(); if (!adminSelectedLocation) return;
-      const sched1 = document.getElementById('f-schedule').value.trim(); const sched2 = document.getElementById('f-schedule-2').value.trim(); const finalSchedule = sched2 ? `${sched1}, ${sched2}` : sched1;
+      
+      const sched1 = document.getElementById('f-schedule').value.trim(); 
+      const sched2 = document.getElementById('f-schedule-2').value.trim(); 
+      const sched3 = document.getElementById('f-schedule-3').value.trim(); 
+      
+      let finalSchedule = sched1;
+      if (sched2) finalSchedule += `, ${sched2}`;
+      if (sched3) finalSchedule += `, ${sched3}`;
+
       const storeData = { 
           name: document.getElementById('f-name').value, 
           type: document.getElementById('f-type').value, 
