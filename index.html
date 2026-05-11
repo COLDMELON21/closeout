@@ -330,10 +330,10 @@
         <i class="fas fa-bullhorn text-brand-red text-xl mr-3"></i>
         <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Banner de Promociones (Aviso Superior)</h3>
       </div>
-      <p class="text-sm text-gray-500 mb-4 font-medium">Este mensaje aparecerá en la parte más alta de la página web. Déjalo en blanco si quieres ocultarlo.</p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">Este mensaje aparecerá en la parte más alta de la página web. Déjalo en blanco si quieres ocultarlo.</p>
       <div class="flex flex-col sm:flex-row gap-3">
-        <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 ¡Descuentos de Fin de Semana en toda la tienda! 🔥" class="flex-grow px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl outline-none text-sm focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white">
-        <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center justify-center shadow-md text-sm whitespace-nowrap">
+        <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 ¡Descuentos de Fin de Semana en toda la tienda! 🔥" class="flex-grow px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+        <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform flex items-center justify-center shadow-md text-sm whitespace-nowrap dark:hover:bg-gray-200">
           <i class="fas fa-save mr-2"></i> Guardar Banner
         </button>
       </div>
@@ -348,16 +348,16 @@
           </div>
           <div>
             <h2 class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white">Panel de Control</h2>
-            <p class="text-sm text-gray-500 font-medium mt-1">Gestión avanzada de base de datos de sucursales.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Gestión avanzada de base de datos de sucursales.</p>
           </div>
         </div>
         
         <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <div class="relative w-full lg:w-64 mb-2 lg:mb-0">
-             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-             <input type="text" id="admin-search-input" placeholder="Buscar en tabla..." class="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl outline-none text-sm focus:border-brand-blue transition-colors font-medium">
+             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+             <input type="text" id="admin-search-input" placeholder="Buscar en tabla..." class="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
           </div>
-          <button onclick="restoreBaseStores()" class="flex-1 lg:flex-none justify-center bg-white dark:bg-gray-800 px-5 py-3 rounded-xl font-bold flex items-center hover:bg-gray-50 border border-gray-200 transition-all text-sm transform hover:-translate-y-1 hover:shadow-md">
+          <button onclick="restoreBaseStores()" class="flex-1 lg:flex-none justify-center bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-5 py-3 rounded-xl font-bold flex items-center hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 transition-all text-sm transform hover:-translate-y-1 hover:shadow-md">
             <i class="fas fa-history mr-2 opacity-50"></i> Restaurar
           </button>
           <button onclick="openAddModal()" class="flex-1 lg:flex-none justify-center bg-brand-blue text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-[#001f52] shadow-lg shadow-brand-blue/30 transition-all text-sm transform hover:-translate-y-1">
@@ -368,15 +368,15 @@
     </div>
 
     <!-- Tabla de Sucursales -->
-    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-100 overflow-hidden">
-      <div class="overflow-x-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-soft border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
         <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700">
-          <thead class="bg-gray-50/50 dark:bg-gray-800/50">
+          <thead class="bg-gray-50/50 dark:bg-gray-900/50">
             <tr>
-              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Información de Sucursal</th>
-              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest">Detalles</th>
-              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 uppercase tracking-widest hidden sm:table-cell">Ubicación</th>
-              <th class="px-6 py-4 text-right text-xs font-black text-gray-400 uppercase tracking-widest">Acción</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Información de Sucursal</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Detalles</th>
+              <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest hidden sm:table-cell">Ubicación</th>
+              <th class="px-6 py-4 text-right text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Acción</th>
             </tr>
           </thead>
           <tbody id="admin-table-body" class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -389,7 +389,7 @@
   <!-- MODAL DE CONTRASEÑA -->
   <div id="password-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
     <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-sm p-8 relative animate-fade-in-up border border-gray-100 dark:border-gray-700 transform scale-95 transition-transform duration-300">
-      <button onclick="closePasswordModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-800 bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center hover:rotate-90 transition-all">
+      <button onclick="closePasswordModal()" class="absolute top-5 right-5 text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center hover:rotate-90 transition-all">
         <i class="fas fa-times text-sm"></i>
       </button>
       
@@ -398,18 +398,18 @@
           <i class="fas fa-lock text-white text-2xl"></i>
         </div>
         <h3 class="text-2xl font-display font-black text-gray-900 dark:text-white">Acceso Restringido</h3>
-        <p class="text-sm text-gray-500 mt-2 font-medium">Área exclusiva para administradores.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">Área exclusiva para administradores.</p>
       </div>
       
       <form id="password-form">
         <div class="relative">
-          <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-          <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none focus:border-gray-800 transition-colors text-lg font-bold tracking-widest" />
+          <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+          <input type="password" id="admin-password" placeholder="Contraseña..." class="w-full pl-11 pr-4 py-3.5 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none focus:border-gray-800 dark:focus:border-gray-600 transition-colors text-lg font-bold tracking-widest text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500" />
         </div>
-        <p id="password-error" class="text-brand-red text-xs mt-3 font-bold text-center hidden-view bg-red-50 py-2 rounded-lg animate-bounce">
+        <p id="password-error" class="text-brand-red text-xs mt-3 font-bold text-center hidden-view bg-red-50 dark:bg-red-900/30 py-2 rounded-lg animate-bounce">
           <i class="fas fa-exclamation-circle mr-1"></i> Contraseña incorrecta.
         </p>
-        <button type="submit" class="w-full mt-6 bg-gray-900 text-white hover:bg-black font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 uppercase tracking-widest text-sm">
+        <button type="submit" class="w-full mt-6 bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-black dark:hover:bg-gray-200 font-black py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 uppercase tracking-widest text-sm">
           Desbloquear Panel
         </button>
       </form>
@@ -418,81 +418,81 @@
 
   <!-- MODAL AGREGAR / EDITAR SUCURSAL -->
   <div id="add-modal" class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-md items-center justify-center p-4 z-50 hidden-view flex">
-    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up border border-gray-100">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-5xl max-h-[90vh] md:max-h-[95vh] overflow-hidden flex flex-col md:flex-row animate-fade-in-up border border-gray-100 dark:border-gray-700">
       
-      <div class="w-full md:w-1/2 p-6 md:p-8 overflow-y-auto flex-shrink-0 custom-scrollbar">
-        <div class="flex justify-between items-center mb-8">
+      <!-- Contenedor del Formulario (Ahora ocupa el espacio sobrante con flex-1 y tiene su propio scroll) -->
+      <div class="w-full md:w-1/2 p-5 md:p-8 overflow-y-auto flex-1 custom-scrollbar">
+        <div class="flex justify-between items-center mb-6 md:mb-8">
           <div>
-            <h3 id="modal-title" class="text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
+            <h3 id="modal-title" class="text-xl md:text-2xl font-display font-black text-gray-900 dark:text-white flex items-center">
                Nueva Sucursal
             </h3>
-            <p class="text-sm text-gray-500 font-medium mt-1">Completa los datos y marca en el mapa.</p>
+            <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 font-medium mt-1">Completa los datos y marca en el mapa.</p>
           </div>
-          <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-800 bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center hover:rotate-90 transition-all">
+          <button onclick="closeAddModal()" class="text-gray-400 dark:text-gray-500 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-gray-700 rounded-full w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:rotate-90 transition-all shrink-0">
             <i class="fas fa-times"></i>
           </button>
         </div>
 
-        <form id="add-store-form" class="space-y-5">
+        <form id="add-store-form" class="space-y-4 md:space-y-5">
           <div>
-            <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Nombre de Tienda</label>
-            <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl focus:border-brand-blue outline-none text-sm font-bold transition-colors" placeholder="Ej: Close Out Linda Vista" />
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Nombre de Tienda</label>
+            <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl focus:border-brand-blue dark:focus:border-brand-blue outline-none text-sm font-bold transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" placeholder="Ej: Close Out Linda Vista" />
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
-              <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none cursor-pointer hover:bg-gray-100">
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Categoría</label>
+              <select id="f-type" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
                 <option value="normal">Full Price</option>
                 <option value="liquidacion">Liquidación</option>
                 <option value="ninos">Niños</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Departamento</label>
-              <select id="f-depto" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors appearance-none cursor-pointer hover:bg-gray-100">
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Departamento</label>
+              <select id="f-depto" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
                 <!-- Se llena por JS -->
               </select>
             </div>
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2 text-brand-red">ESTADO</label>
-              <select id="f-status" class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-red transition-colors appearance-none cursor-pointer hover:bg-gray-100 text-gray-900">
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2 text-brand-red dark:text-red-400">ESTADO</label>
+              <select id="f-status" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-red dark:focus:border-brand-red transition-colors appearance-none cursor-pointer text-gray-900 dark:text-white">
                 <option value="open">Operativa</option>
                 <option value="closed_temp">En Remodelación</option>
               </select>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Dirección Exacta</label>
-            <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-medium focus:border-brand-blue transition-colors resize-none" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
+            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Dirección Exacta</label>
+            <textarea id="f-address" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-medium focus:border-brand-blue dark:focus:border-brand-blue transition-colors resize-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" rows="2" placeholder="De donde fue el arbolito 2c al sur..."></textarea>
           </div>
           
-          <!-- Se actualizó la grilla de horarios a 3 columnas -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Horario Principal</label>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Horario Principal</label>
               <div class="relative">
-                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="f-schedule" required placeholder="Ej: Lun-Sab: 9:30-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule" required placeholder="Ej: Lun-Sab: 9:30-6:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
               </div>
             </div>
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opc)</span></label>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Secundario <span class="normal-case font-medium">(Opc)</span></label>
               <div class="relative">
-                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="f-schedule-2" placeholder="Ej: Dom: 9:00-3:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule-2" placeholder="Ej: Dom: 9:00-3:00" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
               </div>
             </div>
             <div>
-              <label class="block text-xs font-black text-gray-400 uppercase tracking-wider mb-2">Tercero <span class="normal-case font-medium">(Opc)</span></label>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Tercero <span class="normal-case font-medium">(Opc)</span></label>
               <div class="relative">
-                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" id="f-schedule-3" placeholder="Ej: Feriados: Cerrado" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 bg-gray-50 rounded-xl outline-none text-sm font-bold focus:border-brand-blue transition-colors" />
+                <i class="far fa-clock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
+                <input type="text" id="f-schedule-3" placeholder="Ej: Feriados: Cerrado" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl outline-none text-sm font-bold focus:border-brand-blue dark:focus:border-brand-blue transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" />
               </div>
             </div>
           </div>
 
-          <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 gap-4">
-            <div id="modal-map-status" class="text-sm font-bold text-gray-400 flex items-center bg-gray-50 py-2 px-4 rounded-lg transition-colors">
+          <div class="pt-6 mt-2 flex flex-col sm:flex-row sm:items-center justify-between border-t border-gray-100 dark:border-gray-700 gap-4">
+            <div id="modal-map-status" class="text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors">
               <i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉
             </div>
             <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-8 py-3.5 rounded-xl font-black disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-lg hover:bg-[#001f52] transition-all transform hover:-translate-y-1">
@@ -502,9 +502,9 @@
         </form>
       </div>
 
-      <!-- Mapa Modal -->
-      <div class="w-full md:w-1/2 bg-gray-200 h-[300px] md:h-auto relative border-t md:border-t-0 md:border-l border-gray-100">
-        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 glass text-gray-900 px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center pointer-events-none animate-pulse-soft">
+      <!-- Mapa Modal (Ahora tiene un tamaño fijo en móviles usando shrink-0 para no estirar el modal principal) -->
+      <div class="w-full md:w-1/2 bg-gray-200 dark:bg-gray-700 h-[250px] md:h-auto relative shrink-0 border-t md:border-t-0 md:border-l border-gray-100 dark:border-gray-700">
+        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 glass dark:bg-gray-800 text-gray-900 dark:text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg flex items-center pointer-events-none animate-pulse-soft border dark:border-gray-600">
           <i class="fas fa-crosshairs mr-2 text-brand-red"></i> Ubicar
         </div>
         <div id="admin-map" class="absolute inset-0 w-full h-full"></div>
@@ -847,7 +847,7 @@
       const tbody = document.getElementById('admin-table-body');
       
       if (filteredAdminStores.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500 font-bold">No se encontraron tiendas en tu búsqueda.</td></tr>`; return;
+        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-bold">No se encontraron tiendas en tu búsqueda.</td></tr>`; return;
       }
 
       tbody.innerHTML = filteredAdminStores.map(store => {
@@ -861,7 +861,7 @@
             : `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-green/10 text-brand-green uppercase"><i class="fas fa-check-circle mr-1"></i> Activa</span>`;
 
         return `
-          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up ${store.status === 'closed_temp' ? 'bg-gray-50/50 opacity-80' : ''}">
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up ${store.status === 'closed_temp' ? 'bg-gray-50/50 dark:bg-gray-900/50 opacity-80' : ''}">
             <td class="px-6 py-4">
               <div class="font-display font-bold text-gray-900 dark:text-white ${store.status === 'closed_temp' ? 'text-gray-500 line-through' : ''}">${store.name}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
@@ -872,12 +872,12 @@
               ${statusBadge}
             </td>
             <td class="px-6 py-4 hidden sm:table-cell">
-              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium"><i class="fas fa-map-marker-alt mr-1 text-gray-300"></i>${store.depto} - ${store.address}</div>
+              <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium"><i class="fas fa-map-marker-alt mr-1 text-gray-300 dark:text-gray-600"></i>${store.depto} - ${store.address}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-bold">${scheduleAdminHTML}</div>
             </td>
             <td class="px-6 py-4 text-right whitespace-nowrap">
-              <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 hover:bg-brand-blue p-2.5 rounded-xl transition-all shadow-sm mr-2 transform hover:scale-110"><i class="fas fa-edit"></i></button>
-              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 hover:bg-brand-red p-2.5 rounded-xl transition-all shadow-sm transform hover:scale-110"><i class="fas fa-trash-alt"></i></button>
+              <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 dark:bg-brand-blue/10 dark:text-blue-400 dark:hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue p-2.5 rounded-xl transition-all shadow-sm mr-2 transform hover:scale-110"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteStore('${store.id}')" class="text-brand-red hover:text-white bg-red-50 dark:bg-brand-red/10 dark:text-red-400 dark:hover:text-white hover:bg-brand-red dark:hover:bg-brand-red p-2.5 rounded-xl transition-all shadow-sm transform hover:scale-110"><i class="fas fa-trash-alt"></i></button>
             </td>
           </tr>
         `;
@@ -908,7 +908,7 @@
         if (adminClickMarker) adminClickMarker.setMap(null);
         adminClickMarker = new google.maps.Marker({ position: { lat, lng: lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', animation: google.maps.Animation.DROP });
         const statusEl = document.getElementById('modal-map-status');
-        statusEl.className = 'text-sm font-bold text-brand-green flex items-center bg-green-50 py-2 px-4 rounded-lg transition-colors';
+        statusEl.className = 'text-sm font-bold text-brand-green flex items-center bg-green-50 dark:bg-green-900/30 py-2 px-4 rounded-lg transition-colors';
         statusEl.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Coordenadas capturadas';
         document.getElementById('btn-save-store').disabled = false;
       });
@@ -1012,11 +1012,17 @@
         isAdminView = false; document.getElementById('client-view').classList.remove('hidden-view'); document.getElementById('admin-view').classList.add('hidden-view');
         if(clientMap) google.maps.event.trigger(clientMap, "resize"); initReveal();
       } else {
+        document.body.classList.add('overflow-hidden'); // Bloquea scroll de fondo
         document.getElementById('password-modal').classList.remove('hidden-view'); document.getElementById('admin-password').focus();
       }
     };
 
-    window.closePasswordModal = function() { document.getElementById('password-modal').classList.add('hidden-view'); document.getElementById('password-error').classList.add('hidden-view'); document.getElementById('admin-password').value = ''; };
+    window.closePasswordModal = function() { 
+      document.body.classList.remove('overflow-hidden'); // Desbloquea scroll de fondo
+      document.getElementById('password-modal').classList.add('hidden-view'); 
+      document.getElementById('password-error').classList.add('hidden-view'); 
+      document.getElementById('admin-password').value = ''; 
+    };
 
     document.getElementById('password-form').onsubmit = (e) => {
       e.preventDefault(); const val = document.getElementById('admin-password').value;
@@ -1026,12 +1032,13 @@
     };
 
     window.openAddModal = function(isEdit = false) {
+      document.body.classList.add('overflow-hidden'); // Bloquea scroll de fondo
       const select = document.getElementById('f-depto'); select.innerHTML = departmentsList.filter(d => d !== 'Todos').map(d => `<option value="${d}">${d}</option>`).join('');
       if (!isEdit) {
         document.getElementById('modal-title').innerHTML = 'Nueva Sucursal'; document.getElementById('add-store-form').reset(); adminSelectedLocation = null; editStoreId = null;
         document.getElementById('f-status').value = 'open';
         if (adminClickMarker) adminClickMarker.setMap(null); document.getElementById('btn-save-store').disabled = true;
-        document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 flex items-center bg-gray-50 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
+        document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉';
       }
       document.getElementById('add-modal').classList.remove('hidden-view');
       if(adminMap) { google.maps.event.trigger(adminMap, "resize"); if (!isEdit) { adminMap.setCenter({ lat: 12.136, lng: -86.251 }); } else if (adminSelectedLocation) { adminMap.setCenter(adminSelectedLocation); } }
@@ -1052,12 +1059,13 @@
       adminSelectedLocation = { lat: store.lat, lon: store.lon }; if (adminClickMarker) adminClickMarker.setMap(null);
       if (adminMap && window.google) { adminClickMarker = new google.maps.Marker({ position: { lat: store.lat, lng: store.lon }, map: adminMap, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', animation: google.maps.Animation.DROP }); }
       document.getElementById('btn-save-store').disabled = false;
-      document.getElementById('modal-map-status').className = 'text-sm font-bold text-brand-blue flex items-center bg-blue-50 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-edit mr-2"></i> Ubicación cargada';
+      document.getElementById('modal-map-status').className = 'text-sm font-bold text-brand-blue flex items-center bg-blue-50 dark:bg-brand-blue/10 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-edit mr-2"></i> Ubicación cargada';
     };
 
     window.closeAddModal = function() {
+      document.body.classList.remove('overflow-hidden'); // Desbloquea scroll de fondo
       document.getElementById('add-modal').classList.add('hidden-view'); document.getElementById('add-store-form').reset(); adminSelectedLocation = null; editStoreId = null; 
-      if (adminClickMarker) adminClickMarker.setMap(null); document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 flex items-center bg-gray-50 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉'; document.getElementById('btn-save-store').disabled = true;
+      if (adminClickMarker) adminClickMarker.setMap(null); document.getElementById('modal-map-status').className = 'text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors'; document.getElementById('modal-map-status').innerHTML = '<i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉'; document.getElementById('btn-save-store').disabled = true;
     };
 
     const initFirebaseData = async () => {
