@@ -162,6 +162,9 @@
     
     <!-- Hero / Bienvenida -->
     <div class="text-center mb-6 md:mb-10 opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <span id="dynamic-greeting" class="inline-block py-1.5 px-5 rounded-full bg-brand-blue/5 dark:bg-brand-blue/20 text-brand-blue dark:text-blue-400 font-bold text-xs md:text-sm mb-4 border border-brand-blue/10 dark:border-brand-blue/30 shadow-sm transition-all hover:scale-105 backdrop-blur-md">
+        ¡Hola! 👋
+      </span>
       <h1 class="text-4xl md:text-6xl font-display font-black text-gray-900 dark:text-white mb-4 tracking-tight drop-shadow-sm">Close Out Nicaragua</h1>
       <p class="text-base md:text-lg text-gray-700 dark:text-gray-200 font-medium max-w-2xl mx-auto px-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md py-3.5 rounded-full border border-gray-200/50 dark:border-gray-700/50 shadow-sm inline-block transition-transform hover:scale-105 duration-300">
         <i class="fas fa-shopping-bag mr-2 text-brand-blue animate-bounce"></i> Tienda de ropa y accesorios para toda la familia.
@@ -525,6 +528,11 @@
     </div>
   </div>
 
+  <!-- BOTÓN VOLVER ARRIBA -->
+  <button id="btn-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 right-4 md:bottom-10 md:right-10 z-[65] w-12 h-12 md:w-14 md:h-14 rounded-full glass bg-white/90 dark:bg-gray-800/90 shadow-float border border-gray-200 dark:border-gray-700 flex items-center justify-center text-brand-blue dark:text-blue-400 hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue transform translate-y-20 opacity-0 transition-all duration-500 hover:scale-110 pointer-events-none focus:outline-none">
+    <i class="fas fa-chevron-up text-lg md:text-xl"></i>
+  </button>
+
   <!-- FIREBASE & LOGIC SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -567,14 +575,48 @@
       }, { threshold: 0.1 });
       reveals.forEach(reveal => observer.observe(reveal));
     }
-    document.addEventListener("DOMContentLoaded", initReveal);
+    document.addEventListener("DOMContentLoaded", () => {
+        initReveal();
+        setDynamicGreeting();
+    });
 
-    // --- INDICADOR PROGRESO SCROLL ---
+    // --- SALUDO DINÁMICO ---
+    function setDynamicGreeting() {
+        const greetingEl = document.getElementById('dynamic-greeting');
+        if(!greetingEl) return;
+        const hour = new Date().getHours();
+        let greeting = "";
+        if (hour >= 5 && hour < 12) {
+            greeting = "Buenos días ☀️ ¡Listo para estrenar hoy?";
+        } else if (hour >= 12 && hour < 18) {
+            greeting = "Buenas tardes 🌤️ Encuentra tu estilo ideal.";
+        } else {
+            greeting = "Buenas noches 🌙 Planea tus compras de mañana.";
+        }
+        greetingEl.innerHTML = greeting;
+    }
+
+    // --- INDICADOR PROGRESO SCROLL & BOTÓN VOLVER ARRIBA ---
     window.addEventListener('scroll', () => {
         const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
         const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        
+        // Progreso de Barra Superior
         const scrolled = `${(scrollPx / winHeightPx) * 100}%`;
-        document.getElementById('scroll-progress').style.width = scrolled;
+        const scrollProgressEl = document.getElementById('scroll-progress');
+        if(scrollProgressEl) scrollProgressEl.style.width = scrolled;
+
+        // Mostrar/Ocultar Botón Volver Arriba
+        const btnBackToTop = document.getElementById('btn-back-to-top');
+        if(btnBackToTop) {
+            if (scrollPx > 400) {
+                btnBackToTop.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                btnBackToTop.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            } else {
+                btnBackToTop.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                btnBackToTop.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+            }
+        }
     });
 
     // --- EFECTO TILT 3D PARA TARJETAS ---
