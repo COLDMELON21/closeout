@@ -248,7 +248,7 @@
     <div class="flex flex-col gap-10 md:gap-14">
       
       <!-- Mapa Cliente -->
-      <div class="w-full reveal">
+      <div class="w-full animate-fade-in-up" style="animation-delay: 0.3s;">
         <div class="glass rounded-[2rem] shadow-soft border border-gray-200/50 p-4 md:p-6 lg:p-8 hover:shadow-float transition-shadow duration-500">
           <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
             <div class="flex items-center">
@@ -269,7 +269,7 @@
       </div>
 
       <!-- Grilla Tiendas Cliente -->
-      <div class="w-full reveal">
+      <div class="w-full animate-fade-in-up" style="animation-delay: 0.4s;">
         <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-800 gap-4">
           <div>
             <h2 id="grid-title" class="text-2xl md:text-3xl font-display font-black text-gray-900 dark:text-white transition-all flex items-center gap-3">
@@ -711,7 +711,7 @@
     const categories = [
       { id: 'all', name: 'Todas', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-white dark:bg-gray-800', hoverBg: 'hover:bg-gray-50 dark:hover:bg-gray-700', activeRing: 'ring-gray-300 dark:ring-gray-600' },
       { id: 'normal', name: 'Full Price', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-red-50 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50 dark:ring-red-400/50' },
-      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/10 dark:bg-brand-yellow/20', hoverBg: 'hover:bg-yellow-50 dark:hover:bg-brand-yellow/30', activeRing: 'ring-brand-yellow/50' },
+      { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/10 dark:bg-brand-yellow/20', hoverBg: 'hover:bg-[#FCC71F]/10 dark:hover:bg-brand-yellow/30', activeRing: 'ring-brand-yellow/50' },
       { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
     ];
 
@@ -1005,9 +1005,9 @@
           
           const isClosedTemp = store.status === 'closed_temp';
           
-          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-brand-yellow dark:bg-[#FCC71F]' : 'bg-brand-green dark:bg-[#008A40]';
+          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-[#FCC71F] dark:bg-[#B38C15]' : 'bg-brand-green dark:bg-[#008A40]';
           const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
-          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-yellow-600' : 'bg-green-800';
+          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : 'bg-green-800';
 
           const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('');
           
@@ -1081,8 +1081,8 @@
 
       tbody.innerHTML = filteredAdminStores.map(store => {
         const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
-        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
-        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-brand-yellow/20' : 'bg-brand-green/10';
+        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-[#D4A000] dark:text-brand-yellow' : 'text-brand-green';
+        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-[#FCC71F]/20' : 'bg-brand-green/10';
         const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
         const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
         const statusBadge = store.status === 'closed_temp' 
