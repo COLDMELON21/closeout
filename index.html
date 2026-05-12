@@ -786,42 +786,78 @@
 
     function isStoreOpenNow(schedule) {
       if (!schedule) return false;
-      const now = new Date(); const currentDay = now.getDay(); const currentMinutes = now.getHours() * 60 + now.getMinutes();
-      const parts = schedule.toLowerCase().split(/,|\sy\s|\se\s|\n/);
+      const now = new Date(); 
+      const currentDay = now.getDay(); 
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      
+      // Separar por comas (cada horario es un bloque)
+      const parts = schedule.toLowerCase().split(/,/);
 
-      for (let part of parts) {
-          const normalizedPart = part.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          const timeMatch = normalizedPart.match(/(\d{1,2})(?::(\d{2}))?\s*(?:am|a\.m\.|pm|p\.m\.)?\s*(?:-|a|al|hasta|y)\s*(\d{1,2})(?::(\d{2}))?\s*(?:am|a\.m\.|pm|p\.m\.)?/);
+      for (let i = 0; i < parts.length; i++) {
+          // Limpiar tildes y puntos de a.m./p.m. para que el detector no se confunda
+          let part = parts[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\./g, "").trim();
+          if (!part) continue;
+
+          // Detector de horas ultra flexible (admite guiones, "a", "hasta", etc.)
+          const timeRegex = /(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\s*(?:-|\u2013|\u2014|a|al|hasta|y|:|\/)\s*(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/;
+          const timeMatch = part.match(timeRegex);
 
           if (timeMatch) {
               let appliesToday = false;
-              if (normalizedPart.includes('lunes a sabado') || normalizedPart.includes('lun a sab') || normalizedPart.includes('lun-sab') || (normalizedPart.includes('lun') && normalizedPart.includes('sab'))) {
+              
+              // Lógica infalible de días
+              if (part.includes('lunes a domingo') || part.includes('todos los dias') || part.includes('siempre') || part.match(/lun.*dom/)) {
+                  appliesToday = true;
+              } else if (part.includes('lunes a sabado') || part.match(/lun.*sab/)) {
                   if (currentDay >= 1 && currentDay <= 6) appliesToday = true;
-              } else if (normalizedPart.includes('lunes a viernes') || normalizedPart.includes('lun a vie') || normalizedPart.includes('lun-vie') || (normalizedPart.includes('lun') && normalizedPart.includes('vie'))) {
-                  if (currentDay >= 1 && currentDay <= 5) appliesToday = true;
-              } else if (normalizedPart.includes('lunes a domingo') || normalizedPart.includes('todos los dias') || normalizedPart.includes('siempre')) {
-                  appliesToday = true;
-              } else if (normalizedPart.includes('dom') && !normalizedPart.includes('sab')) {
-                  if (currentDay === 0) appliesToday = true;
-              } else if (!normalizedPart.includes('lun') && !normalizedPart.includes('mar') && !normalizedPart.includes('mie') && !normalizedPart.includes('jue') && !normalizedPart.includes('vie') && !normalizedPart.includes('sab') && !normalizedPart.includes('dom')) {
-                  appliesToday = true;
+              } else if (part.includes('lunes a jueves') || part.match(/lun.*jue/)) {
+                  if (currentDay >= 1 && currentDay <= 4) appliesToday = true;
               } else {
+                  // Verificar si el día actual está escrito literalmente (ej: "dom")
                   const daysMap = { 'dom': 0, 'lun': 1, 'mar': 2, 'mie': 3, 'jue': 4, 'vie': 5, 'sab': 6 };
+                  let isExplicitlyMentioned = false;
                   for (const [dayStr, dayNum] of Object.entries(daysMap)) {
-                     if (normalizedPart.includes(dayStr) && currentDay === dayNum) { appliesToday = true; break; }
+                     if (part.includes(dayStr)) { 
+                         isExplicitlyMentioned = true; 
+                         if (currentDay === dayNum) appliesToday = true; 
+                     }
+                  }
+
+                  // EL SECRETO PARA EL BUG: Si el usuario no escribió el día en el 2do o 3er horario, lo deduce inteligentemente
+                  if (!isExplicitlyMentioned) {
+                      if (i === 0) appliesToday = true; // Primer bloque sin día = aplica hoy
+                      if (i === 1 && currentDay === 6) appliesToday = true; // Segundo bloque sin día asume Sábado
+                      if (i === 2 && currentDay === 0) appliesToday = true; // Tercer bloque sin día asume Domingo
                   }
               }
 
+              // Si el horario aplica para hoy, hacemos la matemática de los minutos
               if (appliesToday) {
                   let startH = parseInt(timeMatch[1]); let startM = timeMatch[2] ? parseInt(timeMatch[2]) : 0;
-                  let endH = parseInt(timeMatch[3]); let endM = timeMatch[4] ? parseInt(timeMatch[4]) : 0;
-                  if (endH <= 11) endH += 12; if (startH < 6 && startH !== 12) startH += 12;
-                  const startTotal = startH * 60 + startM; const endTotal = endH * 60 + endM;
-                  if (currentMinutes >= startTotal && currentMinutes <= endTotal) { return true; }
+                  let startMod = timeMatch[3];
+                  
+                  let endH = parseInt(timeMatch[4]); let endM = timeMatch[5] ? parseInt(timeMatch[5]) : 0;
+                  let endMod = timeMatch[6];
+
+                  // Ajustes automáticos de 12 horas si no se puso AM/PM
+                  if (startMod === 'pm' && startH !== 12) startH += 12;
+                  if (startMod === 'am' && startH === 12) startH = 0;
+                  if (!startMod && startH < 6 && startH !== 12) startH += 12;
+
+                  if (endMod === 'pm' && endH !== 12) endH += 12;
+                  if (endMod === 'am' && endH === 12) endH = 0;
+                  if (!endMod && endH <= 11) endH += 12;
+
+                  const startTotal = startH * 60 + startM; 
+                  const endTotal = endH * 60 + endM;
+                  
+                  if (currentMinutes >= startTotal && currentMinutes <= endTotal) { 
+                      return true; // ¡LA TIENDA ESTÁ ABIERTA!
+                  }
               }
           }
       }
-      return false;
+      return false; // Si recorrió todo y no encajó, está cerrado.
     }
 
     function getOpenStatusHtml(schedule) {
