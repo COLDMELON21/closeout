@@ -153,8 +153,8 @@
         <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain transition-transform duration-500 hover:rotate-2 hover:scale-110 drop-shadow-md">
       </div>
       <div class="flex items-center space-x-3">
-        <!-- Botón PWA / Instalar -->
-        <button id="install-pwa-btn" onclick="installPWA()" class="hidden-view bg-gradient-to-r from-brand-red to-brand-yellow text-white text-xs md:text-sm font-bold px-4 py-2 rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all flex items-center">
+        <!-- Botón PWA / Instalar (Siempre visible como fallback) -->
+        <button id="install-pwa-btn" onclick="installPWA()" class="bg-gradient-to-r from-brand-red to-brand-yellow text-white text-xs md:text-sm font-bold px-4 py-2 rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all flex items-center">
           <i class="fas fa-download mr-1.5"></i> Instalar App
         </button>
 
@@ -560,24 +560,47 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    // IMPORTANTE: Aquí se añadieron increment, arrayUnion y arrayRemove para las nuevas funciones
     import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- SERVICE WORKER DINÁMICO (Requisito para PWA) ---
+    // Esto hace que Chrome reconozca la app como instalable cuando la subas a tu servidor real
+    const swCode = `
+      self.addEventListener('install', (e) => self.skipWaiting());
+      self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
+      self.addEventListener('fetch', (e) => {
+        // Mantiene la app funcionando offline si es necesario
+        e.respondWith(fetch(e.request).catch(() => new Response('Página no disponible offline')));
+      });
+    `;
+    const swBlob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(swBlob);
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(swUrl).catch(err => console.log('Service Worker no registrado (vista previa normal):', err));
+    }
 
     // --- PWA INSTALL PROMPT ---
     let deferredPrompt;
+    
+    // Si el navegador lanza el evento (ej: Android/Chrome en servidor real) lo guardamos
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      document.getElementById('install-pwa-btn').classList.remove('hidden-view');
     });
+
+    // Lógica del botón (Ahora siempre está visible)
     window.installPWA = async () => {
       if (deferredPrompt) {
+        // Lanzar la ventana nativa de instalación de Chrome/Android
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
-          document.getElementById('install-pwa-btn').classList.add('hidden-view');
+          console.log('App instalada');
         }
         deferredPrompt = null;
+      } else {
+        // Si no existe la ventana nativa (por estar en iPhone o en la vista previa de la web)
+        showToast("Para instalar en iPhone/PC: Abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.", false);
       }
     };
 
@@ -822,7 +845,7 @@
       t.className = `glass px-5 py-4 rounded-2xl shadow-xl font-bold animate-fade-in-up text-sm flex items-center border-l-4 ${isError ? 'border-brand-red text-red-900 dark:text-red-300' : 'border-brand-green text-gray-900 dark:text-white'}`;
       t.innerHTML = isError ? `<div class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center mr-3 transform hover:rotate-12 transition-transform"><i class="fas fa-exclamation text-brand-red"></i></div>${msg}` : `<div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center mr-3 transform hover:scale-110 transition-transform"><i class="fas fa-check text-brand-green"></i></div>${msg}`;
       container.appendChild(t);
-      setTimeout(() => t.remove(), 4000);
+      setTimeout(() => t.remove(), 4000); // Mostramos el toast más tiempo
     };
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -1061,8 +1084,6 @@
     function renderFilters() {
       const catContainer = document.getElementById('category-buttons');
       
-      // NUEVA LÓGICA DE CLASES FLEXIBLES: 
-      // Calculan exactamente el ancho para encajar y centrarse, adaptando padding y textos.
       catContainer.innerHTML = categories.map((cat, index) => `
         <button onclick="setCategory('${cat.id}')" class="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-1.2rem)] flex-shrink-0 group relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-float hover:-translate-y-2 animate-fade-in-up ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor} transform scale-105 z-10` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}" style="animation-delay: ${index * 0.1}s">
           <div class="mb-3 md:mb-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-md group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden p-2 sm:p-3 md:p-4 border-2 border-gray-100 dark:border-gray-700">
@@ -1168,7 +1189,7 @@
              ? `<span class="bg-gray-800 text-brand-yellow text-[10px] px-2.5 py-1 rounded-md font-black shadow-sm inline-flex items-center gap-1.5 shrink-0 leading-none uppercase tracking-wider border border-brand-yellow/30"><i class="fas fa-hard-hat"></i> Remodelación</span>` 
              : getOpenStatusHtml(store.schedule);
 
-          // Badge Promocional (Fase 2)
+          // Badge Promocional
           const promoBadgeHtml = store.promo ? `<div class="absolute -top-3 -right-3 promo-badge bg-gradient-to-tr from-brand-red to-pink-600 text-white text-[11px] font-black px-4 py-2 shadow-xl z-30 animate-pulse border-2 border-white transform rotate-3 flex items-center"><i class="fas fa-bolt mr-1 text-brand-yellow"></i> ${store.promo}</div>` : '';
 
           const opacityClass = isClosedTemp ? 'opacity-80 grayscale-[0.4]' : '';
@@ -1221,7 +1242,7 @@
 
       renderClientMarkers(filtered);
       initReveal(); 
-      initTiltEffect(); // Inicializar efecto 3D después de cargar tarjetas
+      initTiltEffect();
     }
 
     function renderAdminTable() {
