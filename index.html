@@ -7,7 +7,7 @@
   
   <!-- Enlace al Manifest Real (Requiere archivo manifest.json en el servidor) -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#002D72">
+  <meta name="theme-color" content="#0d99ff">
   <link rel="apple-touch-icon" href="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png">
 
   <!-- Google Fonts -->
@@ -30,7 +30,7 @@
           },
           colors: {
             brand: {
-              blue: '#002D72', red: '#E30613', green: '#00A650', yellow: '#FCC71F', pastel: '#FF9B6A'
+              blue: '#0d99ff', red: '#E30613', green: '#00A650', yellow: '#FCC71F', pastel: '#FF9B6A'
             }
           },
           boxShadow: {
@@ -110,7 +110,7 @@
     input:checked ~ .toggle-dot { transform: translateX(100%); }
 
     /* Fondos y utilidades */
-    .bg-grid-pattern { background-image: radial-gradient(rgba(0, 45, 114, 0.08) 1px, transparent 1px); background-size: 24px 24px; }
+    .bg-grid-pattern { background-image: radial-gradient(rgba(13, 153, 255, 0.08) 1px, transparent 1px); background-size: 24px 24px; }
     .dark .bg-grid-pattern { background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); }
     
     .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
@@ -393,7 +393,7 @@
             <i class="fas fa-exclamation-triangle mr-2 group-hover:animate-pulse"></i> Cerrar Todas
           </button>
           
-          <button onclick="openAddModal()" class="flex-1 lg:flex-none justify-center bg-brand-blue text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-[#001f52] shadow-lg shadow-brand-blue/30 transition-all text-sm transform hover:-translate-y-1">
+          <button onclick="openAddModal()" class="flex-1 lg:flex-none justify-center bg-brand-blue text-white px-6 py-3 rounded-xl font-bold flex items-center hover:bg-[#0a7bc0] shadow-lg shadow-brand-blue/30 transition-all text-sm transform hover:-translate-y-1">
             <i class="fas fa-plus mr-2"></i> Nueva
           </button>
         </div>
@@ -534,7 +534,7 @@
             <div id="modal-map-status" class="text-sm font-bold text-gray-400 dark:text-gray-500 flex items-center bg-gray-50 dark:bg-gray-900 py-2 px-4 rounded-lg transition-colors">
               <i class="fas fa-mouse-pointer mr-2 animate-bounce"></i> Marca en el mapa 👉
             </div>
-            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-8 py-3.5 rounded-xl font-black disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-lg hover:bg-[#001f52] transition-all transform hover:-translate-y-1">
+            <button type="submit" id="btn-save-store" disabled class="w-full sm:w-auto bg-brand-blue text-white px-8 py-3.5 rounded-xl font-black disabled:opacity-50 disabled:cursor-not-allowed text-sm shadow-lg hover:bg-[#0a7bc0] transition-all transform hover:-translate-y-1">
               Guardar
             </button>
           </div>
@@ -1167,10 +1167,10 @@
           const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : 
                               isLiq ? 'bg-[#FCC71F] dark:bg-[#B38C15]' : 
                               isNinos ? 'bg-brand-green dark:bg-[#008A40]' : 
-                              'bg-brand-blue dark:bg-[#001f52]';
+                              'bg-brand-blue dark:bg-[#0a7bc0]';
                               
           const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : isNinos ? 'text-brand-green' : 'text-brand-blue';
-          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : isNinos ? 'bg-green-800' : 'bg-[#001538]';
+          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : isNinos ? 'bg-green-800' : 'bg-[#07598c]';
 
           const feriadoWarningHtml = isFeriadoToday && !isClosedTemp ? `<div class="text-[10px] bg-brand-yellow/90 text-gray-900 font-black px-2 py-1 rounded shadow-sm inline-block mt-2 animate-pulse"><i class="fas fa-umbrella-beach"></i> Feriado Hoy (Aplica Horario Especial)</div>` : '';
           const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('') + feriadoWarningHtml;
