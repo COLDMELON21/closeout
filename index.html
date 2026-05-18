@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CloseOut Nica - Directorio de Sucursales</title>
   
-  <!-- PWA Manifest dinámico para instalación -->
-  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Close Out Nicaragua","short_name":"CloseOut","start_url":".","display":"standalone","background_color":"#F8FAFC","theme_color":"#002D72","icons":[{"src":"https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png","sizes":"192x192","type":"image/png"}]}'>
+  <!-- Enlace al Manifest Real (Requiere archivo manifest.json en el servidor) -->
+  <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#002D72">
+  <link rel="apple-touch-icon" href="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -153,7 +154,7 @@
         <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain transition-transform duration-500 hover:rotate-2 hover:scale-110 drop-shadow-md">
       </div>
       <div class="flex items-center space-x-3">
-        <!-- Botón PWA / Instalar (Siempre visible como fallback) -->
+        <!-- Botón PWA / Instalar -->
         <button id="install-pwa-btn" onclick="installPWA()" class="bg-gradient-to-r from-brand-red to-brand-yellow text-white text-xs md:text-sm font-bold px-4 py-2 rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all flex items-center">
           <i class="fas fa-download mr-1.5"></i> Instalar App
         </button>
@@ -562,36 +563,25 @@
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- SERVICE WORKER DINÁMICO (Requisito para PWA) ---
-    // Esto hace que Chrome reconozca la app como instalable cuando la subas a tu servidor real
-    const swCode = `
-      self.addEventListener('install', (e) => self.skipWaiting());
-      self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
-      self.addEventListener('fetch', (e) => {
-        // Mantiene la app funcionando offline si es necesario
-        e.respondWith(fetch(e.request).catch(() => new Response('Página no disponible offline')));
-      });
-    `;
-    const swBlob = new Blob([swCode], { type: 'application/javascript' });
-    const swUrl = URL.createObjectURL(swBlob);
-    
+    // --- SERVICE WORKER REGISTRATION (Requisito para PWA) ---
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register(swUrl).catch(err => console.log('Service Worker no registrado (vista previa normal):', err));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.log('SW no registrado (Normal si estás en la vista previa web):', err);
+        });
+      });
     }
 
     // --- PWA INSTALL PROMPT ---
     let deferredPrompt;
     
-    // Si el navegador lanza el evento (ej: Android/Chrome en servidor real) lo guardamos
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
     });
 
-    // Lógica del botón (Ahora siempre está visible)
     window.installPWA = async () => {
       if (deferredPrompt) {
-        // Lanzar la ventana nativa de instalación de Chrome/Android
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
@@ -599,8 +589,8 @@
         }
         deferredPrompt = null;
       } else {
-        // Si no existe la ventana nativa (por estar en iPhone o en la vista previa de la web)
-        showToast("Para instalar en iPhone/PC: Abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.", false);
+        // Fallback si el navegador bloquea la instalación automática (Ej: iOS o incognito)
+        showToast("Para instalar en Android/iOS: Abre el menú del navegador (⋮) y elige 'Instalar aplicación' o 'Agregar a inicio'.", false);
       }
     };
 
@@ -845,7 +835,7 @@
       t.className = `glass px-5 py-4 rounded-2xl shadow-xl font-bold animate-fade-in-up text-sm flex items-center border-l-4 ${isError ? 'border-brand-red text-red-900 dark:text-red-300' : 'border-brand-green text-gray-900 dark:text-white'}`;
       t.innerHTML = isError ? `<div class="w-8 h-8 rounded-full bg-brand-red/20 flex items-center justify-center mr-3 transform hover:rotate-12 transition-transform"><i class="fas fa-exclamation text-brand-red"></i></div>${msg}` : `<div class="w-8 h-8 rounded-full bg-brand-green/20 flex items-center justify-center mr-3 transform hover:scale-110 transition-transform"><i class="fas fa-check text-brand-green"></i></div>${msg}`;
       container.appendChild(t);
-      setTimeout(() => t.remove(), 4000); // Mostramos el toast más tiempo
+      setTimeout(() => t.remove(), 4500);
     };
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
