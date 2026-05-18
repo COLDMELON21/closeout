@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CloseOut Nica - Directorio de Sucursales</title>
   
+  <!-- PWA Manifest dinámico para instalación -->
+  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Close Out Nicaragua","short_name":"CloseOut","start_url":".","display":"standalone","background_color":"#F8FAFC","theme_color":"#002D72","icons":[{"src":"https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png","sizes":"192x192","type":"image/png"}]}'>
+  <meta name="theme-color" content="#002D72">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,7 +100,6 @@
         transition: transform 0.5s ease, box-shadow 0.5s ease; 
         transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1); 
     }
-    /* Añadir algo de profundidad a los elementos internos de la tarjeta al hacer hover */
     .store-card.tilt-active > div {
         transform: translateZ(20px);
     }
@@ -113,6 +116,9 @@
     .dark .glass { background: rgba(17, 24, 39, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); }
 
     .hidden-view { display: none !important; }
+
+    /* Insignia Promocional */
+    .promo-badge { clip-path: polygon(100% 0, 100% 100%, 50% 85%, 0 100%, 0 0); }
 
     /* Custom Scrollbar */
     ::-webkit-scrollbar { width: 8px; }
@@ -147,6 +153,11 @@
         <img src="https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png" alt="CloseOut Nica Logo" class="h-10 md:h-12 w-auto object-contain transition-transform duration-500 hover:rotate-2 hover:scale-110 drop-shadow-md">
       </div>
       <div class="flex items-center space-x-3">
+        <!-- Botón PWA / Instalar -->
+        <button id="install-pwa-btn" onclick="installPWA()" class="hidden-view bg-gradient-to-r from-brand-red to-brand-yellow text-white text-xs md:text-sm font-bold px-4 py-2 rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all flex items-center">
+          <i class="fas fa-download mr-1.5"></i> Instalar App
+        </button>
+
         <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft border border-gray-100 dark:border-gray-700 hover:text-brand-blue dark:hover:text-blue-400 hover:rotate-12 hover:scale-110 transition-all duration-300">
           <i id="theme-toggle-dark-icon" class="fas fa-moon hidden text-sm"></i>
           <i id="theme-toggle-light-icon" class="fas fa-sun hidden text-sm"></i>
@@ -170,7 +181,7 @@
         <i class="fas fa-shopping-bag mr-2 text-brand-blue animate-bounce"></i> Tienda de ropa y accesorios para toda la familia.
       </p>
 
-      <!-- Redes Sociales (Movidas al principio) -->
+      <!-- Redes Sociales -->
       <div class="mt-8 flex justify-center gap-4 md:gap-6">
         <a id="link-fb" href="#" target="_blank" rel="noopener noreferrer" class="group relative w-12 h-12 md:w-14 md:h-14 rounded-2xl md:rounded-[1.2rem] bg-white dark:bg-gray-800 flex items-center justify-center text-blue-600 shadow-soft hover:shadow-lg transform hover:-translate-y-2 hover:scale-110 transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-500 overflow-hidden">
           <div class="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
@@ -204,7 +215,10 @@
         <div class="w-2 h-8 bg-brand-blue rounded-full mr-3 transform origin-bottom hover:scale-y-110 transition-transform"></div>
         <h3 class="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight">Filtrar Colección</h3>
       </div>
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" id="category-buttons"></div>
+      
+      <!-- CONTENEDOR FLEX PARA ALINEACIÓN PERFECTA DE 5 ICONOS -->
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-6" id="category-buttons"></div>
+      
     </div>
 
     <!-- Geolocalización Banner -->
@@ -308,17 +322,17 @@
   <main id="admin-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in-up hidden-view relative z-10">
     
     <!-- Configuración Web General -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
       <!-- Editor de Banner -->
       <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50">
         <div class="flex items-center mb-3">
           <i class="fas fa-bullhorn text-brand-red text-xl mr-3"></i>
           <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Banner Promocional</h3>
         </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">Aparece en la parte más alta de la página. Déjalo en blanco para ocultar.</p>
-        <div class="flex flex-col sm:flex-row gap-3">
-          <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 Descuentos de Fin de Semana 🔥" class="flex-grow px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
-          <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm whitespace-nowrap">Guardar</button>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium leading-tight">Aparece en la parte más alta. Déjalo en blanco para ocultar.</p>
+        <div class="flex flex-col gap-3">
+          <input type="text" id="admin-banner-input" placeholder="Ej: 🔥 Descuentos 🔥" class="w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
+          <button onclick="saveBanner()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-2.5 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm whitespace-nowrap w-full">Guardar Banner</button>
         </div>
       </div>
 
@@ -326,25 +340,30 @@
       <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50">
         <div class="flex items-center mb-3">
           <i class="fas fa-link text-brand-blue text-xl mr-3"></i>
-          <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Enlaces de Redes Sociales</h3>
+          <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Redes Sociales</h3>
         </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium">Actualiza los links del pie de página (Footer).</p>
-        <div class="space-y-3">
-          <div class="flex relative">
-            <i class="fab fa-facebook-f absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-600"></i>
-            <input type="text" id="admin-fb" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-blue-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Facebook">
-          </div>
-          <div class="flex relative">
-            <i class="fab fa-instagram absolute left-4 top-1/2 transform -translate-y-1/2 text-pink-500"></i>
-            <input type="text" id="admin-ig" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-pink-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Instagram">
-          </div>
-          <div class="flex gap-3 relative">
-            <div class="flex-grow relative">
-              <i class="fab fa-tiktok absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-800 dark:text-gray-300"></i>
-              <input type="text" id="admin-tk" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-gray-800 dark:focus:border-white transition-colors text-gray-900 dark:text-white" placeholder="Link de TikTok">
-            </div>
-            <button onclick="saveSocials()" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm shrink-0">Guardar</button>
-          </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium leading-tight">Actualiza los links del pie de página.</p>
+        <div class="space-y-3 mb-3">
+          <div class="flex relative"><i class="fab fa-facebook-f absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-600"></i><input type="text" id="admin-fb" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-blue-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Facebook"></div>
+          <div class="flex relative"><i class="fab fa-instagram absolute left-4 top-1/2 transform -translate-y-1/2 text-pink-500"></i><input type="text" id="admin-ig" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-pink-500 transition-colors text-gray-900 dark:text-white" placeholder="Link de Instagram"></div>
+          <div class="flex relative"><i class="fab fa-tiktok absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-800 dark:text-gray-300"></i><input type="text" id="admin-tk" class="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-xs focus:border-gray-800 dark:focus:border-white transition-colors text-gray-900 dark:text-white" placeholder="Link de TikTok"></div>
+        </div>
+        <button onclick="saveSocials()" class="w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-xl font-bold hover:scale-105 transition-transform shadow-md text-sm shrink-0">Guardar Redes</button>
+      </div>
+
+      <!-- Gestor de Feriados -->
+      <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50 flex flex-col">
+        <div class="flex items-center mb-3">
+          <i class="fas fa-calendar-alt text-brand-green text-xl mr-3"></i>
+          <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Días Feriados</h3>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 font-medium leading-tight">Avisa automáticamente en estas fechas.</p>
+        <div class="flex gap-2 mb-3">
+          <input type="date" id="admin-holiday-input" class="flex-grow px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-sm bg-white dark:bg-gray-900 dark:text-white outline-none">
+          <button onclick="addHoliday()" class="bg-brand-green text-white px-4 py-2 rounded-xl font-bold hover:bg-green-700 transition-colors shadow-md"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="flex-grow overflow-y-auto max-h-[100px] custom-scrollbar bg-gray-50 dark:bg-gray-800/50 rounded-xl p-2 border border-gray-100 dark:border-gray-700" id="holiday-list-container">
+          <!-- Lista de feriados -->
         </div>
       </div>
     </div>
@@ -389,6 +408,7 @@
               <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Información de Sucursal</th>
               <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Detalles</th>
               <th class="px-6 py-4 text-left text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest hidden sm:table-cell">Ubicación</th>
+              <th class="px-6 py-4 text-center text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest hidden lg:table-cell">Métricas</th>
               <th class="px-6 py-4 text-right text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Acción</th>
             </tr>
           </thead>
@@ -447,9 +467,15 @@
         </div>
 
         <form id="add-store-form" class="space-y-4 md:space-y-5">
-          <div>
-            <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Nombre de Tienda</label>
-            <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl focus:border-brand-blue dark:focus:border-brand-blue outline-none text-sm font-bold transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" placeholder="Ej: Close Out Linda Vista" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Nombre de Tienda</label>
+              <input type="text" id="f-name" required class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-xl focus:border-brand-blue dark:focus:border-brand-blue outline-none text-sm font-bold transition-colors text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600" placeholder="Ej: Close Out Linda Vista" />
+            </div>
+            <div>
+              <label class="block text-xs font-black text-brand-red dark:text-red-400 uppercase tracking-wider mb-2"><i class="fas fa-star text-brand-yellow"></i> Insignia (Opcional)</label>
+              <input type="text" id="f-promo" class="w-full px-4 py-3 border-2 border-brand-red/30 focus:border-brand-red bg-red-50/50 dark:bg-red-900/10 rounded-xl text-sm font-bold outline-none transition-colors text-brand-red dark:text-red-400 placeholder-brand-red/40" placeholder="Ej: 50% OFF Hoy" />
+            </div>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -458,6 +484,7 @@
                 <option value="normal">Full Price</option>
                 <option value="liquidacion">Liquidación</option>
                 <option value="ninos">Niños</option>
+                <option value="deporte">Deporte</option>
               </select>
             </div>
             <div>
@@ -533,7 +560,26 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    // IMPORTANTE: Aquí se añadieron increment, arrayUnion y arrayRemove para las nuevas funciones
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- PWA INSTALL PROMPT ---
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-pwa-btn').classList.remove('hidden-view');
+    });
+    window.installPWA = async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          document.getElementById('install-pwa-btn').classList.add('hidden-view');
+        }
+        deferredPrompt = null;
+      }
+    };
 
     // --- MODO OSCURO LÓGICA ---
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -713,6 +759,7 @@
       { id: 'normal', name: 'Full Price', imgUrl: 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png', bgColor: 'bg-brand-red/5 dark:bg-brand-red/10', hoverBg: 'hover:bg-red-50 dark:hover:bg-brand-red/20', activeRing: 'ring-brand-red/50 dark:ring-red-400/50' },
       { id: 'liquidacion', name: 'Liquidación', imgUrl: 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png', bgColor: 'bg-brand-yellow/10 dark:bg-brand-yellow/20', hoverBg: 'hover:bg-[#FCC71F]/10 dark:hover:bg-brand-yellow/30', activeRing: 'ring-brand-yellow/50' },
       { id: 'ninos', name: 'Niños', imgUrl: 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png', bgColor: 'bg-brand-green/5 dark:bg-brand-green/10', hoverBg: 'hover:bg-green-50 dark:hover:bg-brand-green/20', activeRing: 'ring-brand-green/50' },
+      { id: 'deporte', name: 'Deporte', imgUrl: 'https://i.postimg.cc/tgYsmQJm/CO-DEPORTE.png', bgColor: 'bg-brand-blue/5 dark:bg-brand-blue/10', hoverBg: 'hover:bg-blue-50 dark:hover:bg-brand-blue/20', activeRing: 'ring-brand-blue/50' }
     ];
 
     let localStoresCache = JSON.parse(localStorage.getItem('closeout_local_stores')) || [];
@@ -721,6 +768,7 @@
     
     let stores = [...localStoresCache];
     let bannerText = localStorage.getItem('closeout_banner') || '';
+    let holidays = []; // NUEVO: Para guardar los feriados
     
     let defaultSocials = {
         fb: 'https://www.facebook.com/share/1BNEEkVvDX/',
@@ -898,6 +946,53 @@
       }
     }
 
+    // --- NUEVA LÓGICA DE ANALÍTICAS (Rastreo) ---
+    window.trackInteraction = async (id, type) => {
+        if(id.startsWith('local-')) return; // No rastrear datos offline locales
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'stores', id), {
+                [type === 'llevame' ? 'clicksLlevame' : 'clicksShare']: increment(1)
+            });
+        } catch(e) { console.log("Analytics update failed - ignoring for UX", e); }
+    };
+
+    // --- NUEVA LÓGICA DE FERIADOS ---
+    window.addHoliday = async () => {
+        const val = document.getElementById('admin-holiday-input').value;
+        if(!val) return showToast("Selecciona una fecha válida", true);
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'holidays'), { dates: arrayUnion(val) });
+            showToast("Feriado agregado con éxito");
+            document.getElementById('admin-holiday-input').value = '';
+        } catch(e) {
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'holidays'), { dates: [val] });
+            showToast("Feriado guardado");
+        }
+    };
+    
+    window.removeHoliday = async (val) => {
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'holidays'), { dates: arrayRemove(val) });
+            showToast("Feriado eliminado");
+        } catch(e) { showToast("Error al eliminar", true); }
+    };
+
+    function renderHolidaysUI() {
+        const container = document.getElementById('holiday-list-container');
+        if(!container) return;
+        if(holidays.length === 0) {
+            container.innerHTML = `<p class="text-xs text-gray-400 dark:text-gray-500 text-center py-2 font-medium">No hay feriados programados.</p>`;
+        } else {
+            const sorted = [...holidays].sort();
+            container.innerHTML = sorted.map(h => `
+               <div class="flex justify-between items-center bg-white dark:bg-gray-800 px-3 py-2 rounded-lg border border-gray-100 dark:border-gray-700 mb-1.5 shadow-sm">
+                 <span class="text-xs font-bold text-gray-800 dark:text-gray-200"><i class="fas fa-calendar-day mr-1 text-brand-green"></i> ${h}</span>
+                 <button onclick="removeHoliday('${h}')" class="text-brand-red hover:scale-110 transition-transform"><i class="fas fa-times-circle"></i></button>
+               </div>
+            `).join('');
+        }
+    }
+
     window.saveBanner = async () => {
       const newVal = document.getElementById('admin-banner-input').value;
       try {
@@ -948,6 +1043,8 @@
         const store = stores.find(s => s.id === id);
         if (!store) return;
         
+        trackInteraction(id, 'share'); // Track Analytics
+        
         const mapUrl = `https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}`;
         const text = `¡Nos vemos en Close Out ${store.name}!\n📍 Ubicación: ${store.address}\n🗺️ Mapa: ${mapUrl}`;
         
@@ -963,12 +1060,15 @@
 
     function renderFilters() {
       const catContainer = document.getElementById('category-buttons');
+      
+      // NUEVA LÓGICA DE CLASES FLEXIBLES: 
+      // Calculan exactamente el ancho para encajar y centrarse, adaptando padding y textos.
       catContainer.innerHTML = categories.map((cat, index) => `
-        <button onclick="setCategory('${cat.id}')" class="group relative flex flex-col items-center justify-center p-4 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-float hover:-translate-y-2 animate-fade-in-up ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor} transform scale-105` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}" style="animation-delay: ${index * 0.1}s">
-          <div class="mb-4 w-28 h-28 md:w-36 md:h-36 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-md group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden p-3 border-2 border-gray-100 dark:border-gray-700">
+        <button onclick="setCategory('${cat.id}')" class="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-1.2rem)] flex-shrink-0 group relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-[1.5rem] transition-all duration-300 border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-float hover:-translate-y-2 animate-fade-in-up ${activeCategory === cat.id ? `ring-2 ring-offset-4 dark:ring-offset-gray-900 ${cat.activeRing} ${cat.bgColor} transform scale-105 z-10` : `bg-white dark:bg-gray-800 ${cat.hoverBg}`}" style="animation-delay: ${index * 0.1}s">
+          <div class="mb-3 md:mb-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 flex items-center justify-center bg-white dark:bg-gray-900 rounded-full shadow-md group-hover:shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden p-2 sm:p-3 md:p-4 border-2 border-gray-100 dark:border-gray-700">
             <img src="${cat.imgUrl}" alt="${cat.name}" class="w-full h-full object-contain drop-shadow-md transition-transform duration-500 group-hover:rotate-[3deg] group-hover:scale-110">
           </div>
-          <span class="font-display font-black text-sm md:text-lg text-center text-gray-800 dark:text-gray-200 tracking-wide mt-2">${cat.name}</span>
+          <span class="font-display font-black text-[12px] sm:text-[14px] md:text-[16px] text-center text-gray-800 dark:text-gray-200 tracking-wide mt-1 line-clamp-1">${cat.name}</span>
         </button>
       `).join('');
 
@@ -1000,6 +1100,10 @@
     function renderStoresList() {
       if (isLoading) { renderSkeletons(); return; }
 
+      // Chequeo de Feriados
+      const todayLocal = new Date().toLocaleDateString('en-CA');
+      const isFeriadoToday = holidays.includes(todayLocal);
+
       let filtered = stores.filter(store => 
         (activeCategory === 'all' || store.type === activeCategory) && 
         (activeDepto === 'Todos' || store.depto === activeDepto) &&
@@ -1015,7 +1119,7 @@
         gridStores = filtered.filter(store => store.id !== nearestStore.id);
       }
 
-      const sortOrder = { 'normal': 1, 'liquidacion': 2, 'ninos': 3 };
+      const sortOrder = { 'normal': 1, 'liquidacion': 2, 'ninos': 3, 'deporte': 4 };
       gridStores.sort((a, b) => {
         return (sortOrder[a.type] || 99) - (sortOrder[b.type] || 99);
       });
@@ -1035,28 +1139,44 @@
           </div>`;
       } else {
         grid.innerHTML = gridStores.map((store, index) => {
-          const imgUrl = store.type === 'normal' ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : store.type === 'liquidacion' ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png';
-          const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
-          const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+          const isNormal = store.type === 'normal'; 
+          const isLiq = store.type === 'liquidacion'; 
+          const isNinos = store.type === 'ninos';
+          const isDeporte = store.type === 'deporte';
+          
+          const imgUrl = isNormal ? 'https://i.postimg.cc/WbFZZXdq/Manual-de-marca-con-nuevo-logo-julio-40.png' : 
+                         isLiq ? 'https://i.postimg.cc/rptsd8Mn/Manual-de-marca-con-nuevo-logo-julio-42.png' : 
+                         isNinos ? 'https://i.postimg.cc/d0T37qwN/Manual-de-marca-con-nuevo-logo-julio-41.png' : 
+                         'https://i.postimg.cc/tgYsmQJm/CO-DEPORTE.png';
+                         
+          const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : isNinos ? 'Niños' : 'Deporte';
           
           const isClosedTemp = store.status === 'closed_temp';
           
-          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : isLiq ? 'bg-[#FCC71F] dark:bg-[#B38C15]' : 'bg-brand-green dark:bg-[#008A40]';
-          const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : 'text-brand-green';
-          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : 'bg-green-800';
+          const cardBgClass = isNormal ? 'bg-brand-red dark:bg-[#99040D]' : 
+                              isLiq ? 'bg-[#FCC71F] dark:bg-[#B38C15]' : 
+                              isNinos ? 'bg-brand-green dark:bg-[#008A40]' : 
+                              'bg-brand-blue dark:bg-[#001f52]';
+                              
+          const tagTextColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-brand-yellow' : isNinos ? 'text-brand-green' : 'text-brand-blue';
+          const bgSolidClass = isNormal ? 'bg-red-900' : isLiq ? 'bg-[#D4A000]' : isNinos ? 'bg-green-800' : 'bg-[#001538]';
 
-          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('');
+          const feriadoWarningHtml = isFeriadoToday && !isClosedTemp ? `<div class="text-[10px] bg-brand-yellow/90 text-gray-900 font-black px-2 py-1 rounded shadow-sm inline-block mt-2 animate-pulse"><i class="fas fa-umbrella-beach"></i> Feriado Hoy (Aplica Horario Especial)</div>` : '';
+          const scheduleHTML = store.schedule.split(/,\s*/).map(s => `<span><i class="far fa-clock mr-1.5 text-white/80"></i>${s.trim()}</span>`).join('') + feriadoWarningHtml;
           
           const statusHtml = isClosedTemp 
              ? `<span class="bg-gray-800 text-brand-yellow text-[10px] px-2.5 py-1 rounded-md font-black shadow-sm inline-flex items-center gap-1.5 shrink-0 leading-none uppercase tracking-wider border border-brand-yellow/30"><i class="fas fa-hard-hat"></i> Remodelación</span>` 
              : getOpenStatusHtml(store.schedule);
+
+          // Badge Promocional (Fase 2)
+          const promoBadgeHtml = store.promo ? `<div class="absolute -top-3 -right-3 promo-badge bg-gradient-to-tr from-brand-red to-pink-600 text-white text-[11px] font-black px-4 py-2 shadow-xl z-30 animate-pulse border-2 border-white transform rotate-3 flex items-center"><i class="fas fa-bolt mr-1 text-brand-yellow"></i> ${store.promo}</div>` : '';
 
           const opacityClass = isClosedTemp ? 'opacity-80 grayscale-[0.4]' : '';
 
           const buttonHtml = isClosedTemp
              ? `<button disabled class="w-full bg-gray-800 text-gray-400 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-md flex items-center justify-center cursor-not-allowed border border-gray-700">Cerrado Temporalmente</button>`
              : `<div class="flex gap-2 w-full relative z-30">
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" class="flex-grow bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 group-hover:shadow-lg">
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" onclick="trackInteraction('${store.id}', 'llevame')" class="flex-grow bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 group-hover:shadow-lg">
                     <i class="fas fa-location-arrow mr-1.5 text-brand-blue group-hover:animate-bounce"></i> Llévame
                   </a>
                   <button onclick="shareStore('${store.id}')" title="Compartir sucursal" class="w-12 shrink-0 bg-white/20 text-white hover:bg-white/40 py-3 rounded-xl transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 hover:rotate-6 backdrop-blur-sm border border-white/30">
@@ -1066,6 +1186,7 @@
 
           return `
           <div class="store-card tilt-reset ${cardBgClass} ${opacityClass} rounded-[1.5rem] border border-white/10 overflow-hidden group flex flex-col relative animate-fade-in-up" style="animation-delay: ${index * 0.05}s">
+            ${promoBadgeHtml}
             <div class="p-6 md:p-7 flex flex-col flex-grow relative z-10 transition-transform duration-300">
               <div class="flex justify-between items-start mb-4 w-full relative z-20">
                 <div class="flex flex-col gap-1.5 items-start">
@@ -1112,24 +1233,35 @@
       const tbody = document.getElementById('admin-table-body');
       
       if (filteredAdminStores.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-bold">No se encontraron tiendas en tu búsqueda.</td></tr>`; return;
+        tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-gray-500 dark:text-gray-400 font-bold">No se encontraron tiendas en tu búsqueda.</td></tr>`; return;
       }
 
       tbody.innerHTML = filteredAdminStores.map(store => {
-        const isNormal = store.type === 'normal'; const isLiq = store.type === 'liquidacion';
-        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-[#D4A000] dark:text-brand-yellow' : 'text-brand-green';
-        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-[#FCC71F]/20' : 'bg-brand-green/10';
-        const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : 'Niños';
+        const isNormal = store.type === 'normal'; 
+        const isLiq = store.type === 'liquidacion'; 
+        const isNinos = store.type === 'ninos';
+        const isDeporte = store.type === 'deporte';
+
+        const textColorClass = isNormal ? 'text-brand-red' : isLiq ? 'text-[#D4A000] dark:text-brand-yellow' : isNinos ? 'text-brand-green' : 'text-brand-blue';
+        const bgLightClass = isNormal ? 'bg-brand-red/10' : isLiq ? 'bg-[#FCC71F]/20' : isNinos ? 'bg-brand-green/10' : 'bg-brand-blue/10';
+        const label = isNormal ? 'Full Price' : isLiq ? 'Liquidación' : isNinos ? 'Niños' : 'Deporte';
         const scheduleAdminHTML = store.schedule.split(/,\s*/).map(s => `<div class="mb-0.5"><i class="far fa-clock mr-1"></i>${s.trim()}</div>`).join('');
         const statusBadge = store.status === 'closed_temp' 
             ? `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-gray-800 text-brand-yellow uppercase"><i class="fas fa-hard-hat mr-1"></i> Remodelación</span>` 
             : `<span class="mt-2 inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-brand-green/10 text-brand-green uppercase"><i class="fas fa-check-circle mr-1"></i> Activa</span>`;
+        
+        const promoLabel = store.promo ? `<div class="mt-1 text-[10px] font-bold text-pink-600 bg-pink-50 dark:bg-pink-900/30 dark:text-pink-400 inline-block px-1.5 py-0.5 rounded"><i class="fas fa-star"></i> ${store.promo}</div>` : '';
+
+        // Contadores
+        const clksLlevame = store.clicksLlevame || 0;
+        const clksShare = store.clicksShare || 0;
 
         return `
           <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 border-b border-gray-50 dark:border-gray-700 transition-colors animate-fade-in-up ${store.status === 'closed_temp' ? 'bg-gray-50/50 dark:bg-gray-900/50 opacity-80' : ''}">
             <td class="px-6 py-4">
               <div class="font-display font-bold text-gray-900 dark:text-white ${store.status === 'closed_temp' ? 'text-gray-500 line-through' : ''}">${store.name}</div>
-              <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block">Lat: ${store.lat.toFixed(4)}</div>
+              ${promoLabel}
+              <div class="text-[10px] text-gray-400 mt-1 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded inline-block w-fit">Lat: ${store.lat.toFixed(4)}</div>
             </td>
             <td class="px-6 py-4">
               <span class="px-3 py-1 inline-flex text-[10px] font-black rounded-lg uppercase tracking-widest ${bgLightClass} ${textColorClass}">${label}</span>
@@ -1139,6 +1271,12 @@
             <td class="px-6 py-4 hidden sm:table-cell">
               <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 font-medium"><i class="fas fa-map-marker-alt mr-1 text-gray-300 dark:text-gray-600"></i>${store.depto} - ${store.address}</div>
               <div class="text-[10px] text-gray-400 mt-1 font-bold">${scheduleAdminHTML}</div>
+            </td>
+            <td class="px-6 py-4 hidden lg:table-cell text-center">
+               <div class="flex flex-col items-center gap-1.5">
+                 <div class="text-xs bg-blue-50 text-blue-700 dark:bg-brand-blue/20 dark:text-blue-400 px-2 py-1 rounded-lg font-bold shadow-sm w-fit" title="Clics en Llévame"><i class="fas fa-location-arrow mr-1"></i> ${clksLlevame}</div>
+                 <div class="text-xs bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg font-bold shadow-sm w-fit" title="Clics en Compartir"><i class="fas fa-share-alt mr-1"></i> ${clksShare}</div>
+               </div>
             </td>
             <td class="px-6 py-4 text-right whitespace-nowrap">
               <button onclick="editStore('${store.id}')" class="text-brand-blue hover:text-white bg-blue-50 dark:bg-brand-blue/10 dark:text-blue-400 dark:hover:text-white hover:bg-brand-blue dark:hover:bg-brand-blue p-2.5 rounded-xl transition-all shadow-sm mr-2 transform hover:scale-110"><i class="fas fa-edit"></i></button>
@@ -1326,6 +1464,7 @@
     window.editStore = function(id) {
       const store = stores.find(s => s.id === id); if (!store) return;
       editStoreId = id; document.getElementById('f-name').value = store.name; document.getElementById('f-type').value = store.type; document.getElementById('f-address').value = store.address;
+      document.getElementById('f-promo').value = store.promo || '';
       
       const scheduleParts = store.schedule.split(/,\s*/); 
       document.getElementById('f-schedule').value = scheduleParts[0] || ''; 
@@ -1374,6 +1513,13 @@
           if (docSnap.exists()) { socialLinks = { ...defaultSocials, ...docSnap.data() }; } updateSocialsUI();
         });
 
+        // Cargar Feriados (NUEVO)
+        const holidayRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'holidays');
+        onSnapshot(holidayRef, (docSnap) => {
+          if (docSnap.exists()) { holidays = docSnap.data().dates || []; } else { holidays = []; }
+          renderHolidaysUI(); renderStoresList(); // Refrescar para ver advertencia de feriados
+        });
+
       } catch (error) { isLoading = false; renderStoresList(); }
     };
     initFirebaseData();
@@ -1395,6 +1541,7 @@
           depto: document.getElementById('f-depto').value, 
           status: document.getElementById('f-status').value,
           address: document.getElementById('f-address').value, 
+          promo: document.getElementById('f-promo').value.trim(),
           schedule: finalSchedule, 
           lat: adminSelectedLocation.lat, 
           lon: adminSelectedLocation.lon 
