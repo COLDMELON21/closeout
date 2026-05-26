@@ -52,6 +52,9 @@
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Chart.js para Dashboard Visual -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body { scroll-behavior: smooth; }
     .font-display { font-family: 'Outfit', sans-serif; }
@@ -376,6 +379,12 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <!-- Botón de Importación Masiva -->
+          <input type="file" id="csv-upload" accept=".csv" class="hidden-view">
+          <button onclick="importCSV()" class="flex-1 lg:flex-none justify-center bg-green-50 dark:bg-green-900/30 text-brand-green dark:text-green-400 px-5 py-3 rounded-xl font-bold flex items-center hover:bg-brand-green hover:text-white border border-green-200 dark:border-green-800 transition-all text-sm transform hover:-translate-y-1 hover:shadow-md">
+            <i class="fas fa-file-csv mr-2"></i> Importar CSV
+          </button>
+
           <div class="relative w-full lg:w-64 mb-2 lg:mb-0">
              <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
              <input type="text" id="admin-search-input" placeholder="Buscar en tabla..." class="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-xl outline-none text-sm focus:border-brand-blue dark:focus:border-brand-blue transition-colors font-medium text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500">
@@ -390,6 +399,17 @@
             <i class="fas fa-plus mr-2"></i> Nueva
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Visual de Estadísticas -->
+    <div class="glass rounded-3xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50 mb-8 animate-fade-in-up">
+      <div class="flex items-center mb-4">
+        <i class="fas fa-chart-bar text-brand-blue text-xl mr-3"></i>
+        <h3 class="font-display font-bold text-gray-900 dark:text-white text-lg">Rendimiento por Sucursal</h3>
+      </div>
+      <div class="w-full h-64 md:h-80">
+        <canvas id="statsChart"></canvas>
       </div>
     </div>
 
@@ -554,7 +574,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch, increment, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, setDoc, writeBatch, increment, arrayUnion, arrayRemove, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     // --- MODO OSCURO LÓGICA ---
     const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
@@ -578,6 +598,7 @@
             } else { document.documentElement.classList.add('dark'); localStorage.setItem('color-theme', 'dark'); }
         }
         if(window.updateMapStyles) window.updateMapStyles();
+        if(typeof updateDashboard === 'function') updateDashboard();
     });
 
     // --- LÓGICA DE ANIMACIÓN SCROLL (REVEAL) ---
@@ -687,6 +708,15 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Activar Soporte Offline Extremo
+    enableIndexedDbPersistence(db).catch((err) => {
+      if (err.code == 'failed-precondition') {
+          console.warn('Varias pestañas abiertas, modo offline solo funciona en una.');
+      } else if (err.code == 'unimplemented') {
+          console.warn('El navegador no soporta almacenamiento offline.');
+      }
+    });
+
     const lightMapStyle = [
       { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] }, { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
       { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] }, { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
@@ -762,6 +792,9 @@
     let isAdminView = false;
     let clientMap = null, adminMap = null, clientMarkers = [], adminClickMarker = null, adminSelectedLocation = null, adminExistingMarkers = [];
     let editStoreId = null;
+    let directionsService = null;
+    let directionsRenderer = null;
+    let statsChartInstance = null;
 
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search');
@@ -1149,9 +1182,9 @@
           const buttonHtml = isClosedTemp
              ? `<button disabled class="w-full bg-gray-800 text-gray-400 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-md flex items-center justify-center cursor-not-allowed border border-gray-700">Cerrado Temporalmente</button>`
              : `<div class="flex gap-2 w-full relative z-30">
-                  <a href="https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lon}" target="_blank" rel="noopener noreferrer" onclick="trackInteraction('${store.id}', 'llevame')" class="flex-grow bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 group-hover:shadow-lg">
+                  <button onclick="drawRoute(${store.lat}, ${store.lon}); trackInteraction('${store.id}', 'llevame')" class="flex-grow bg-white text-gray-900 hover:bg-gray-100 py-3 rounded-xl text-[11px] md:text-xs font-black uppercase tracking-widest transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 group-hover:shadow-lg">
                     <i class="fas fa-location-arrow mr-1.5 text-brand-blue group-hover:animate-bounce"></i> Llévame
-                  </a>
+                  </button>
                   <button onclick="shareStore('${store.id}')" title="Compartir sucursal" class="w-12 shrink-0 bg-white/20 text-white hover:bg-white/40 py-3 rounded-xl transition-all duration-300 shadow-md flex items-center justify-center transform hover:-translate-y-1 hover:rotate-6 backdrop-blur-sm border border-white/30">
                     <i class="fas fa-share-alt"></i>
                   </button>
@@ -1270,6 +1303,14 @@
       clientMap = new google.maps.Map(document.getElementById('client-map'), mapOptions);
       adminMap = new google.maps.Map(document.getElementById('admin-map'), { ...mapOptions, cursor: 'crosshair' });
 
+      // Inicializar Servicios de Rutas para Polyline
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ 
+        suppressMarkers: true, 
+        polylineOptions: { strokeColor: '#0d99ff', strokeWeight: 5 } 
+      });
+      directionsRenderer.setMap(clientMap);
+
       adminMap.addListener('click', (e) => {
         const lat = e.latLng.lat(); const lon = e.latLng.lng(); adminSelectedLocation = { lat, lon };
         if (adminClickMarker) adminClickMarker.setMap(null);
@@ -1318,6 +1359,48 @@
         const listener = google.maps.event.addListener(clientMap, 'idle', function() { if (clientMap.getZoom() > 14) clientMap.setZoom(14); google.maps.event.removeListener(listener); });
       }
     }
+
+    // --- Dibujar ruta en vivo (Polyline) con Fallback ---
+    window.drawRoute = function(destLat, destLon) {
+      const fallbackUrl = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLon}`;
+
+      if (!navigator.geolocation || !directionsService || !directionsRenderer) {
+        showToast("Abriendo Google Maps...");
+        window.open(fallbackUrl, '_blank');
+        return;
+      }
+      
+      showToast("Calculando ruta...");
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const origin = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          const destination = new google.maps.LatLng(destLat, destLon);
+          
+          directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: 'DRIVING'
+          }, (response, status) => {
+            if (status === 'OK') {
+              directionsRenderer.setDirections(response);
+              document.getElementById('client-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+              showToast("Ruta trazada en el mapa.");
+            } else {
+              console.warn("Error trazando ruta interna: " + status);
+              showToast("Abriendo ruta en Google Maps...");
+              window.open(fallbackUrl, '_blank'); // Fallback si Google rechaza la ruta
+            }
+          });
+        },
+        (error) => {
+          console.warn("Error de GPS: ", error.message);
+          showToast("Abriendo Google Maps...");
+          window.open(fallbackUrl, '_blank'); // Fallback si falla el GPS del navegador
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    };
 
     const mapScript = document.createElement('script'); mapScript.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMaps`; mapScript.async = true; document.head.appendChild(mapScript);
 
@@ -1392,9 +1475,93 @@
     document.getElementById('password-form').onsubmit = (e) => {
       e.preventDefault(); const val = document.getElementById('admin-password').value;
       if (val === ADMIN_PASSWORD) {
-        closePasswordModal(); isAdminView = true; document.getElementById('client-view').classList.add('hidden-view'); document.getElementById('admin-view').classList.remove('hidden-view'); renderAdminTable();
+        closePasswordModal(); isAdminView = true; document.getElementById('client-view').classList.add('hidden-view'); document.getElementById('admin-view').classList.remove('hidden-view'); renderAdminTable(); updateDashboard();
       } else { document.getElementById('password-error').classList.remove('hidden-view'); }
     };
+
+    // --- Lógica del Dashboard de Estadísticas ---
+    window.updateDashboard = function() {
+      const ctx = document.getElementById('statsChart');
+      if (!ctx || !isAdminView) return;
+      
+      const labels = stores.map(s => s.name.replace('Close Out ', ''));
+      const dataLlevame = stores.map(s => s.clicksLlevame || 0);
+      const dataShare = stores.map(s => s.clicksShare || 0);
+
+      if (statsChartInstance) { statsChartInstance.destroy(); }
+      
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#9ca3af' : '#4b5563';
+
+      statsChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Clics en Llévame', data: dataLlevame, backgroundColor: '#0d99ff', borderRadius: 6 },
+            { label: 'Compartidos', data: dataShare, backgroundColor: '#00A650', borderRadius: 6 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: textColor } } },
+          scales: { 
+            y: { ticks: { color: textColor }, grid: { color: isDark ? '#374151' : '#e5e7eb' } },
+            x: { ticks: { color: textColor }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // --- Lógica de Importación CSV ---
+    window.importCSV = function() {
+      document.getElementById('csv-upload').click();
+    };
+
+    document.getElementById('csv-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showToast("Leyendo archivo CSV...");
+      const reader = new FileReader();
+      reader.onload = async function(event) {
+        const text = event.target.result;
+        const rows = text.split('\n');
+        let addedCount = 0;
+        
+        // Formato esperado: Nombre,Tipo,Departamento,Direccion,Horario,Latitud,Longitud
+        for (let i = 1; i < rows.length; i++) {
+          const row = rows[i].trim();
+          if(!row) continue;
+          
+          const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+          
+          if (cols.length >= 7) {
+            const lat = parseFloat(cols[5]);
+            const lon = parseFloat(cols[6]);
+            
+            if (!isNaN(lat) && !isNaN(lon)) {
+              const storeData = {
+                name: cols[0] || 'Nueva Sucursal',
+                type: cols[1] || 'normal',
+                depto: cols[2] || 'Managua',
+                status: 'open',
+                address: cols[3] || '',
+                schedule: cols[4] || 'Lunes a Sábado: 9:00-6:00',
+                promo: '', lat: lat, lon: lon
+              };
+              
+              try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'stores'), storeData);
+                addedCount++;
+              } catch(err) { console.error("Error importando fila", err); }
+            }
+          }
+        }
+        showToast(`Importación masiva completada: ${addedCount} sucursales agregadas.`);
+        e.target.value = ''; // Limpiar input
+      };
+      reader.readAsText(file);
+    });
 
     function clearAdminMarkers() {
         if (adminClickMarker) adminClickMarker.setMap(null);
@@ -1471,7 +1638,8 @@
         onSnapshot(storesRef, (snapshot) => {
           isLoading = false; // Ya tenemos data
           if (!snapshot.empty) { const fbStores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })); stores = [...localStoresCache, ...fbStores]; } else { stores = [...localStoresCache]; }
-          renderFilters(); renderStoresList(); if (isAdminView) renderAdminTable();
+          renderFilters(); renderStoresList(); 
+          if (isAdminView) { renderAdminTable(); updateDashboard(); }
         }, (err) => { isLoading = false; console.error("Firebase error. Usando local."); renderStoresList(); });
 
         // Cargar Banner
